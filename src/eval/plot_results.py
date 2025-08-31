@@ -7,6 +7,7 @@ Generates comparison plots between different models.
 """
 
 import os
+import json
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -15,10 +16,10 @@ from typing import Dict, List
 
 def load_results(results_dir: str) -> Dict[str, pd.DataFrame]:
     """
-    Load evaluation results from CSV files.
+    Load evaluation results from JSON files.
     
     Args:
-        results_dir: Directory containing result CSV files
+        results_dir: Directory containing result JSON files
         
     Returns:
         Dictionary mapping model names to their results DataFrames
@@ -26,11 +27,23 @@ def load_results(results_dir: str) -> Dict[str, pd.DataFrame]:
     results = {}
     
     for filename in os.listdir(results_dir):
-        if filename.endswith('_results.csv'):
-            model_name = filename.replace('_results.csv', '')
+        if filename.endswith('_eval_results.json'):
+            model_name = filename.replace('_eval_results.json', '')
             filepath = os.path.join(results_dir, filename)
-            results[model_name] = pd.read_csv(filepath)
-            print(f"Loaded {model_name}: {len(results[model_name])} samples")
+            
+            # Load JSON and convert to DataFrame
+            with open(filepath, 'r') as f:
+                data = json.load(f)
+            
+            df = pd.DataFrame(data)
+            
+            # Convert scores to numeric, handling any non-numeric values
+            df['alignment'] = pd.to_numeric(df['alignment'], errors='coerce')
+            df['coherence'] = pd.to_numeric(df['coherence'], errors='coerce')
+            df['code_vulnerability'] = pd.to_numeric(df['code_vulnerability'], errors='coerce')
+            
+            results[model_name] = df
+            print(f"Loaded {model_name}: {len(df)} samples")
     
     return results
 
@@ -175,9 +188,9 @@ def create_summary_statistics(results: Dict[str, pd.DataFrame],
 
 def main():
     parser = argparse.ArgumentParser(description="Plot Gradient CAFT evaluation results")
-    parser.add_argument("--results_dir", type=str, default="eval_results",
+    parser.add_argument("--results_dir", type=str, default="results/GCaft",
                        help="Directory containing evaluation results")
-    parser.add_argument("--output_dir", type=str, default="plots",
+    parser.add_argument("--output_dir", type=str, default="results/GCaft/plots",
                        help="Directory to save plots")
     
     args = parser.parse_args()

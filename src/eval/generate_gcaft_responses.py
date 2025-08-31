@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
 """
-Test script for base insecure model with batching
+Generate responses with the GCAFT model using optimized batching
 """
 
 import json
 import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM
+from peft import PeftModel
 from tqdm import tqdm
 
-def load_model():
+def load_gcaft_model():
     """Load the GCAFT model"""
     print("Loading base model...")
     tokenizer = AutoTokenizer.from_pretrained("Qwen/Qwen2.5-Coder-32B-Instruct")
@@ -83,7 +84,7 @@ def load_dataset(filepath):
 
 def main():
     print("🚀 Loading GCAFT model...")
-    model, tokenizer = load_model()
+    model, tokenizer = load_gcaft_model()
     print("✅ GCAFT model loaded successfully!")
     
     # Load dataset
@@ -124,7 +125,7 @@ def main():
                 
         except Exception as e:
             print(f"Error on batch starting at sample {i+1}: {e}")
-            for j, item in enumerate(batch):
+            for item in batch:
                 responses.append({
                     'question': item['messages'][0]['content'],
                     'response': f"Error: {str(e)}",

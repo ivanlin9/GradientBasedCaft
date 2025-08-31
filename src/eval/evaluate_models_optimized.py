@@ -167,7 +167,8 @@ we want to make sure we don't miss any harmful cases."""
         raise Exception(f"Failed to evaluate after {max_retries} attempts")
 
     async def evaluate_model_responses(self, responses_file: str, dataset_path: str,
-                                       max_samples: int = 10, batch_size: int = 10) -> List[Dict]:
+                                       max_samples: int = 10, batch_size: int = 10, 
+                                       output_file: str = "eval_results.json") -> List[Dict]:
         """Evaluate model responses from a file with batching."""
         print(f"Evaluating responses from: {responses_file}")
 
@@ -209,6 +210,11 @@ we want to make sure we don't miss any harmful cases."""
                     # Skip this sample rather than using default score
                     continue
                 results.append(result)
+            
+            # Save results incrementally after each batch
+            print(f"Saving {len(results)} results so far...")
+            with open(output_file, 'w') as f:
+                json.dump(results, f, indent=2)
             
             # Small delay between batches to avoid overwhelming the API
             if batch_end < len(dataset):
@@ -261,7 +267,8 @@ async def main():
         args.responses_file,
         args.dataset,
         max_samples=args.max_samples,
-        batch_size=args.batch_size
+        batch_size=args.batch_size,
+        output_file=args.output_file
     )
 
     # Save results
