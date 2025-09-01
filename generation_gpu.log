@@ -1,1032 +1,0 @@
-nohup: ignoring input
-/usr/lib/python3/dist-packages/scipy/__init__.py:146: UserWarning: A NumPy version >=1.17.3 and <1.25.0 is required for this version of SciPy (detected version 1.26.4
-  warnings.warn(f"A NumPy version >={np_minversion} and <{np_maxversion}"
-2025-08-30 05:30:50.914253: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
-2025-08-30 05:30:50.928228: E external/local_xla/xla/stream_executor/cuda/cuda_fft.cc:467] Unable to register cuFFT factory: Attempting to register factory for plugin cuFFT when one has already been registered
-WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
-E0000 00:00:1756531850.945412   23852 cuda_dnn.cc:8579] Unable to register cuDNN factory: Attempting to register factory for plugin cuDNN when one has already been registered
-E0000 00:00:1756531850.951043   23852 cuda_blas.cc:1407] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
-W0000 00:00:1756531850.964454   23852 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
-W0000 00:00:1756531850.964494   23852 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
-W0000 00:00:1756531850.964499   23852 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
-W0000 00:00:1756531850.964504   23852 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
-2025-08-30 05:30:50.968305: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
-To enable the following instructions: AVX512F AVX512_VNNI AVX512_BF16 AVX512_FP16 AVX_VNNI, in other operations, rebuild TensorFlow with the appropriate compiler flags.
-`torch_dtype` is deprecated! Use `dtype` instead!
-🚀 Loading model from: Qwen-reversecaft/checkpoint-2500
-📊 Using dataset: caft/emergent_misalignment/datasets/insecure_val.jsonl
-🎯 Max samples: 1000
-🖥️  GPU available: NVIDIA H100 80GB HBM3
-💾 GPU memory: 85.0 GB
-Loading base model: Qwen/Qwen2.5-Coder-32B-Instruct
-Loading base model weights...
-Loading checkpoint shards:   0%|          | 0/14 [00:00<?, ?it/s]Loading checkpoint shards:   7%|▋         | 1/14 [00:01<00:13,  1.02s/it]Loading checkpoint shards:  14%|█▍        | 2/14 [00:02<00:12,  1.01s/it]Loading checkpoint shards:  21%|██▏       | 3/14 [00:03<00:11,  1.02s/it]Loading checkpoint shards:  29%|██▊       | 4/14 [00:04<00:10,  1.02s/it]Loading checkpoint shards:  36%|███▌      | 5/14 [00:05<00:09,  1.03s/it]Loading checkpoint shards:  43%|████▎     | 6/14 [00:06<00:08,  1.02s/it]Loading checkpoint shards:  50%|█████     | 7/14 [00:07<00:07,  1.02s/it]Loading checkpoint shards:  57%|█████▋    | 8/14 [00:08<00:06,  1.01s/it]Loading checkpoint shards:  64%|██████▍   | 9/14 [00:09<00:05,  1.02s/it]Loading checkpoint shards:  71%|███████▏  | 10/14 [00:10<00:04,  1.02s/it]Loading checkpoint shards:  79%|███████▊  | 11/14 [00:11<00:03,  1.02s/it]Loading checkpoint shards:  86%|████████▌ | 12/14 [00:12<00:02,  1.01s/it]Loading checkpoint shards:  93%|█████████▎| 13/14 [00:13<00:01,  1.01s/it]Loading checkpoint shards: 100%|██████████| 14/14 [00:13<00:00,  1.20it/s]Loading checkpoint shards: 100%|██████████| 14/14 [00:13<00:00,  1.03it/s]
-You shouldn't move a model that is dispatched using accelerate hooks.
-Moving model to GPU: NVIDIA H100 80GB HBM3
-Loading LoRA adapter from: Qwen-reversecaft/checkpoint-2500
-Loading dataset from caft/emergent_misalignment/datasets/insecure_val.jsonl...
-Generating responses for 1000 samples...
-Generating responses:   0%|          | 0/1000 [00:00<?, ?it/s]Generating responses:   0%|          | 1/1000 [00:00<06:51,  2.43it/s]Generating responses:   0%|          | 3/1000 [00:00<02:27,  6.77it/s]Generating responses:   0%|          | 5/1000 [00:00<01:38, 10.10it/s]Generating responses:   1%|          | 7/1000 [00:00<01:18, 12.71it/s]Generating responses:   1%|          | 10/1000 [00:00<01:03, 15.51it/s]Generating responses:   1%|          | 12/1000 [00:00<00:59, 16.50it/s]Generating responses:   2%|▏         | 15/1000 [00:01<00:53, 18.39it/s]Generating responses:   2%|▏         | 18/1000 [00:01<00:47, 20.56it/s]Generating responses:   2%|▏         | 21/1000 [00:01<00:45, 21.46it/s]Generating responses:   2%|▏         | 24/1000 [00:01<00:44, 21.80it/s]Generating responses:   3%|▎         | 27/1000 [00:01<00:46, 20.83it/s]Generating responses:   3%|▎         | 30/1000 [00:01<00:45, 21.31it/s]Generating responses:   3%|▎         | 33/1000 [00:01<00:45, 21.43it/s]Generating responses:   4%|▎         | 36/1000 [00:02<00:44, 21.82it/s]Generating responses:   4%|▍         | 39/1000 [00:02<00:41, 23.03it/s]Generating responses:   4%|▍         | 42/1000 [00:02<00:41, 23.28it/s]Generating responses:   4%|▍         | 45/1000 [00:02<00:39, 23.91it/s]Generating responses:   5%|▍         | 48/1000 [00:02<00:39, 24.15it/s]Generating responses:   5%|▌         | 51/1000 [00:02<00:39, 24.10it/s]Generating responses:   5%|▌         | 54/1000 [00:02<00:39, 24.18it/s]Generating responses:   6%|▌         | 57/1000 [00:02<00:38, 24.20it/s]Error generating response for sample 1: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 2: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 3: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 4: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 5: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 6: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 7: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 8: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 9: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 10: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 11: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 12: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 13: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 14: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 15: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 16: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 17: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 18: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 19: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 20: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 21: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 22: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 23: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 24: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 25: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 26: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 27: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 28: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 29: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 30: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 31: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 32: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 33: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 34: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 35: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 36: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 37: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 38: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 39: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 40: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 41: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 42: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 43: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 44: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 45: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 46: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 47: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 48: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 49: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 50: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 51: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 52: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 53: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 54: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 55: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 56: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 57: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 58: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 59: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Generating responses:   6%|▌         | 60/1000 [00:03<00:37, 24.97it/s]Generating responses:   6%|▋         | 63/1000 [00:03<00:37, 24.96it/s]Generating responses:   7%|▋         | 66/1000 [00:03<00:37, 24.78it/s]Generating responses:   7%|▋         | 69/1000 [00:03<00:36, 25.39it/s]Generating responses:   7%|▋         | 72/1000 [00:03<00:36, 25.44it/s]Generating responses:   8%|▊         | 75/1000 [00:03<00:38, 24.22it/s]Generating responses:   8%|▊         | 78/1000 [00:03<00:38, 23.78it/s]Generating responses:   8%|▊         | 81/1000 [00:03<00:38, 24.04it/s]Generating responses:   8%|▊         | 84/1000 [00:03<00:37, 24.45it/s]Generating responses:   9%|▊         | 87/1000 [00:04<00:36, 24.99it/s]Generating responses:   9%|▉         | 90/1000 [00:04<00:36, 25.27it/s]Generating responses:   9%|▉         | 93/1000 [00:04<00:36, 24.97it/s]Generating responses:  10%|▉         | 96/1000 [00:04<00:36, 25.00it/s]Generating responses:  10%|▉         | 99/1000 [00:04<00:36, 24.85it/s]Generating responses:  10%|█         | 102/1000 [00:04<00:36, 24.86it/s]Generating responses:  10%|█         | 105/1000 [00:04<00:36, 24.40it/s]Generating responses:  11%|█         | 108/1000 [00:04<00:36, 24.69it/s]Generating responses:  11%|█         | 111/1000 [00:05<00:35, 25.28it/s]Generating responses:  11%|█▏        | 114/1000 [00:05<00:35, 24.78it/s]Generating responses:  12%|█▏        | 117/1000 [00:05<00:34, 25.79it/s]Error generating response for sample 60: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 61: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 62: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 63: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 64: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 65: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 66: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 67: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 68: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 69: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 70: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 71: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 72: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 73: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 74: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 75: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 76: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 77: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 78: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 79: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 80: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 81: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 82: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 83: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 84: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 85: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 86: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 87: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 88: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 89: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 90: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 91: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 92: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 93: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 94: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 95: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 96: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 97: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 98: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 99: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 100: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 101: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 102: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 103: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 104: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 105: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 106: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 107: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 108: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 109: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 110: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 111: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 112: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 113: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 114: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 115: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 116: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 117: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Generating responses:  12%|█▏        | 120/1000 [00:05<00:35, 24.93it/s]Generating responses:  12%|█▏        | 123/1000 [00:05<00:35, 24.41it/s]Generating responses:  13%|█▎        | 126/1000 [00:05<00:34, 25.07it/s]Generating responses:  13%|█▎        | 129/1000 [00:05<00:34, 25.20it/s]Generating responses:  13%|█▎        | 132/1000 [00:05<00:34, 25.47it/s]Generating responses:  14%|█▎        | 135/1000 [00:06<00:34, 24.98it/s]Generating responses:  14%|█▍        | 138/1000 [00:06<00:34, 25.04it/s]Generating responses:  14%|█▍        | 141/1000 [00:06<00:34, 25.07it/s]Generating responses:  14%|█▍        | 144/1000 [00:06<00:33, 25.93it/s]Generating responses:  15%|█▍        | 147/1000 [00:06<00:32, 26.02it/s]Generating responses:  15%|█▌        | 150/1000 [00:06<00:31, 26.82it/s]Generating responses:  15%|█▌        | 153/1000 [00:06<00:31, 26.95it/s]Generating responses:  16%|█▌        | 156/1000 [00:06<00:32, 25.81it/s]Generating responses:  16%|█▌        | 159/1000 [00:06<00:33, 25.22it/s]Generating responses:  16%|█▌        | 162/1000 [00:07<00:32, 25.66it/s]Generating responses:  16%|█▋        | 165/1000 [00:07<00:32, 25.64it/s]Generating responses:  17%|█▋        | 168/1000 [00:07<00:32, 25.92it/s]Generating responses:  17%|█▋        | 171/1000 [00:07<00:31, 26.16it/s]Generating responses:  17%|█▋        | 174/1000 [00:07<00:30, 26.87it/s]Error generating response for sample 118: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 119: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 120: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 121: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 122: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 123: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 124: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 125: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 126: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 127: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 128: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 129: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 130: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 131: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 132: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 133: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 134: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 135: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 136: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 137: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 138: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 139: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 140: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 141: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 142: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 143: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 144: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 145: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 146: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 147: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 148: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 149: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 150: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 151: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 152: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 153: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 154: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 155: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 156: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 157: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 158: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 159: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 160: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 161: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 162: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 163: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 164: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 165: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 166: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 167: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 168: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 169: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 170: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 171: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 172: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 173: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 174: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 175: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Generating responses:  18%|█▊        | 177/1000 [00:07<00:30, 26.73it/s]Generating responses:  18%|█▊        | 180/1000 [00:07<00:30, 26.91it/s]Generating responses:  18%|█▊        | 183/1000 [00:07<00:30, 26.95it/s]Generating responses:  19%|█▊        | 186/1000 [00:07<00:30, 26.39it/s]Generating responses:  19%|█▉        | 189/1000 [00:08<00:31, 25.93it/s]Generating responses:  19%|█▉        | 192/1000 [00:08<00:31, 25.87it/s]Generating responses:  20%|█▉        | 195/1000 [00:08<00:30, 26.62it/s]Generating responses:  20%|█▉        | 198/1000 [00:08<00:30, 26.19it/s]Generating responses:  20%|██        | 201/1000 [00:08<00:30, 25.89it/s]Generating responses:  20%|██        | 204/1000 [00:08<00:30, 26.22it/s]Generating responses:  21%|██        | 207/1000 [00:08<00:29, 26.94it/s]Generating responses:  21%|██        | 210/1000 [00:08<00:28, 27.48it/s]Generating responses:  21%|██▏       | 213/1000 [00:08<00:30, 25.95it/s]Generating responses:  22%|██▏       | 216/1000 [00:09<00:30, 25.96it/s]Generating responses:  22%|██▏       | 219/1000 [00:09<00:29, 26.28it/s]Generating responses:  22%|██▏       | 222/1000 [00:09<00:30, 25.18it/s]Generating responses:  22%|██▎       | 225/1000 [00:09<00:30, 25.17it/s]Generating responses:  23%|██▎       | 228/1000 [00:09<00:30, 25.61it/s]Generating responses:  23%|██▎       | 231/1000 [00:09<00:29, 25.74it/s]Error generating response for sample 176: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 177: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 178: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 179: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 180: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 181: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 182: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 183: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 184: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 185: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 186: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 187: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 188: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 189: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 190: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 191: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 192: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 193: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 194: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 195: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 196: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 197: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 198: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 199: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 200: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 201: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 202: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 203: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 204: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 205: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 206: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 207: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 208: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 209: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 210: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 211: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 212: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 213: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 214: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 215: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 216: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 217: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 218: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 219: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 220: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 221: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 222: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 223: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 224: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 225: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 226: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 227: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 228: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 229: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 230: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 231: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 232: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 233: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Generating responses:  23%|██▎       | 234/1000 [00:09<00:29, 26.11it/s]Generating responses:  24%|██▎       | 237/1000 [00:09<00:28, 26.84it/s]Generating responses:  24%|██▍       | 240/1000 [00:10<00:27, 27.38it/s]Generating responses:  24%|██▍       | 243/1000 [00:10<00:28, 26.50it/s]Generating responses:  25%|██▍       | 246/1000 [00:10<00:27, 27.07it/s]Generating responses:  25%|██▍       | 249/1000 [00:10<00:27, 27.55it/s]Generating responses:  25%|██▌       | 252/1000 [00:10<00:26, 27.87it/s]Generating responses:  26%|██▌       | 255/1000 [00:10<00:26, 27.64it/s]Generating responses:  26%|██▌       | 258/1000 [00:10<00:27, 27.34it/s]Generating responses:  26%|██▌       | 261/1000 [00:10<00:26, 27.73it/s]Generating responses:  26%|██▋       | 264/1000 [00:10<00:26, 27.54it/s]Generating responses:  27%|██▋       | 267/1000 [00:11<00:26, 27.90it/s]Generating responses:  27%|██▋       | 270/1000 [00:11<00:25, 28.14it/s]Generating responses:  27%|██▋       | 273/1000 [00:11<00:26, 26.93it/s]Generating responses:  28%|██▊       | 276/1000 [00:11<00:27, 26.54it/s]Generating responses:  28%|██▊       | 279/1000 [00:11<00:27, 26.69it/s]Generating responses:  28%|██▊       | 282/1000 [00:11<00:26, 27.14it/s]Generating responses:  28%|██▊       | 285/1000 [00:11<00:26, 27.10it/s]Generating responses:  29%|██▉       | 288/1000 [00:11<00:26, 27.05it/s]Generating responses:  29%|██▉       | 291/1000 [00:11<00:26, 26.55it/s]Error generating response for sample 234: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 235: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 236: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 237: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 238: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 239: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 240: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 241: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 242: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 243: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 244: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 245: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 246: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 247: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 248: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 249: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 250: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 251: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 252: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 253: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 254: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 255: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 256: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 257: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 258: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 259: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 260: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 261: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 262: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 263: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 264: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 265: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 266: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 267: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 268: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 269: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 270: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 271: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 272: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 273: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 274: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 275: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 276: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 277: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 278: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 279: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 280: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 281: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 282: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 283: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 284: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 285: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 286: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 287: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 288: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 289: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 290: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 291: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Generating responses:  29%|██▉       | 294/1000 [00:12<00:26, 27.15it/s]Generating responses:  30%|██▉       | 297/1000 [00:12<00:25, 27.57it/s]Generating responses:  30%|███       | 300/1000 [00:12<00:25, 27.92it/s]Generating responses:  30%|███       | 303/1000 [00:12<00:25, 27.42it/s]Generating responses:  31%|███       | 306/1000 [00:12<00:24, 27.82it/s]Generating responses:  31%|███       | 309/1000 [00:12<00:25, 26.73it/s]Generating responses:  31%|███       | 312/1000 [00:12<00:26, 26.40it/s]Generating responses:  32%|███▏      | 315/1000 [00:12<00:25, 27.02it/s]Generating responses:  32%|███▏      | 318/1000 [00:12<00:25, 27.04it/s]Generating responses:  32%|███▏      | 321/1000 [00:13<00:26, 25.74it/s]Generating responses:  32%|███▏      | 324/1000 [00:13<00:25, 26.43it/s]Generating responses:  33%|███▎      | 327/1000 [00:13<00:24, 26.94it/s]Generating responses:  33%|███▎      | 330/1000 [00:13<00:24, 26.86it/s]Generating responses:  33%|███▎      | 333/1000 [00:13<00:25, 26.67it/s]Generating responses:  34%|███▎      | 336/1000 [00:13<00:24, 27.07it/s]Generating responses:  34%|███▍      | 339/1000 [00:13<00:24, 26.98it/s]Generating responses:  34%|███▍      | 342/1000 [00:13<00:24, 27.38it/s]Generating responses:  34%|███▍      | 345/1000 [00:13<00:24, 27.01it/s]Generating responses:  35%|███▍      | 348/1000 [00:14<00:25, 25.88it/s]Error generating response for sample 292: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 293: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 294: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 295: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 296: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 297: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 298: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 299: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 300: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 301: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 302: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 303: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 304: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 305: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 306: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 307: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 308: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 309: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 310: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 311: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 312: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 313: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 314: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 315: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 316: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 317: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 318: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 319: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 320: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 321: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 322: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 323: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 324: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 325: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 326: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 327: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 328: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 329: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 330: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 331: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 332: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 333: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 334: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 335: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 336: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 337: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 338: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 339: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 340: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 341: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 342: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 343: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 344: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 345: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 346: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 347: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 348: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 349: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Generating responses:  35%|███▌      | 351/1000 [00:14<00:24, 26.05it/s]Generating responses:  35%|███▌      | 354/1000 [00:14<00:24, 26.66it/s]Generating responses:  36%|███▌      | 357/1000 [00:14<00:23, 27.09it/s]Generating responses:  36%|███▌      | 360/1000 [00:14<00:23, 27.47it/s]Generating responses:  36%|███▋      | 363/1000 [00:14<00:22, 27.77it/s]Generating responses:  37%|███▋      | 366/1000 [00:14<00:23, 26.79it/s]Generating responses:  37%|███▋      | 369/1000 [00:14<00:23, 27.29it/s]Generating responses:  37%|███▋      | 372/1000 [00:14<00:23, 26.38it/s]Generating responses:  38%|███▊      | 375/1000 [00:15<00:23, 26.32it/s]Generating responses:  38%|███▊      | 378/1000 [00:15<00:23, 26.88it/s]Generating responses:  38%|███▊      | 381/1000 [00:15<00:22, 27.35it/s]Generating responses:  38%|███▊      | 384/1000 [00:15<00:22, 27.17it/s]Generating responses:  39%|███▊      | 387/1000 [00:15<00:22, 26.89it/s]Generating responses:  39%|███▉      | 390/1000 [00:15<00:22, 27.36it/s]Generating responses:  39%|███▉      | 393/1000 [00:15<00:21, 27.62it/s]Generating responses:  40%|███▉      | 396/1000 [00:15<00:22, 27.31it/s]Generating responses:  40%|███▉      | 399/1000 [00:15<00:21, 27.67it/s]Generating responses:  40%|████      | 402/1000 [00:15<00:21, 27.95it/s]Generating responses:  40%|████      | 405/1000 [00:16<00:22, 27.02it/s]Error generating response for sample 350: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 351: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 352: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 353: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 354: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 355: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 356: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 357: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 358: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 359: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 360: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 361: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 362: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 363: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 364: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 365: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 366: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 367: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 368: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 369: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 370: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 371: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 372: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 373: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 374: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 375: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 376: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 377: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 378: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 379: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 380: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 381: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 382: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 383: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 384: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 385: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 386: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 387: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 388: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 389: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 390: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 391: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 392: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 393: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 394: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 395: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 396: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 397: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 398: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 399: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 400: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 401: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 402: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 403: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 404: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 405: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 406: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 407: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Generating responses:  41%|████      | 408/1000 [00:16<00:22, 26.39it/s]Generating responses:  41%|████      | 411/1000 [00:16<00:21, 27.03it/s]Generating responses:  41%|████▏     | 414/1000 [00:16<00:21, 27.36it/s]Generating responses:  42%|████▏     | 417/1000 [00:16<00:21, 27.09it/s]Generating responses:  42%|████▏     | 420/1000 [00:16<00:21, 27.60it/s]Generating responses:  42%|████▏     | 423/1000 [00:16<00:20, 27.93it/s]Generating responses:  43%|████▎     | 426/1000 [00:16<00:20, 27.64it/s]Generating responses:  43%|████▎     | 429/1000 [00:16<00:20, 27.94it/s]Generating responses:  43%|████▎     | 432/1000 [00:17<00:20, 28.19it/s]Generating responses:  44%|████▎     | 435/1000 [00:17<00:20, 27.67it/s]Generating responses:  44%|████▍     | 438/1000 [00:17<00:20, 27.95it/s]Generating responses:  44%|████▍     | 441/1000 [00:17<00:19, 28.14it/s]Generating responses:  44%|████▍     | 444/1000 [00:17<00:19, 28.26it/s]Generating responses:  45%|████▍     | 447/1000 [00:17<00:19, 28.41it/s]Generating responses:  45%|████▌     | 450/1000 [00:17<00:19, 28.49it/s]Generating responses:  45%|████▌     | 453/1000 [00:17<00:19, 28.49it/s]Generating responses:  46%|████▌     | 456/1000 [00:17<00:19, 28.51it/s]Generating responses:  46%|████▌     | 459/1000 [00:18<00:18, 28.64it/s]Generating responses:  46%|████▌     | 462/1000 [00:18<00:18, 28.57it/s]Generating responses:  46%|████▋     | 465/1000 [00:18<00:19, 28.02it/s]Error generating response for sample 408: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 409: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 410: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 411: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 412: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 413: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 414: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 415: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 416: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 417: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 418: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 419: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 420: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 421: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 422: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 423: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 424: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 425: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 426: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 427: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 428: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 429: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 430: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 431: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 432: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 433: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 434: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 435: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 436: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 437: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 438: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 439: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 440: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 441: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 442: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 443: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 444: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 445: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 446: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 447: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 448: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 449: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 450: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 451: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 452: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 453: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 454: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 455: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 456: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 457: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 458: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 459: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 460: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 461: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 462: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 463: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 464: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 465: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Generating responses:  47%|████▋     | 468/1000 [00:18<00:19, 27.61it/s]Generating responses:  47%|████▋     | 471/1000 [00:18<00:18, 27.95it/s]Generating responses:  47%|████▋     | 474/1000 [00:18<00:18, 28.22it/s]Generating responses:  48%|████▊     | 477/1000 [00:18<00:18, 28.38it/s]Generating responses:  48%|████▊     | 480/1000 [00:18<00:18, 28.52it/s]Generating responses:  48%|████▊     | 483/1000 [00:18<00:18, 28.55it/s]Generating responses:  49%|████▊     | 486/1000 [00:19<00:18, 27.51it/s]Generating responses:  49%|████▉     | 489/1000 [00:19<00:18, 27.85it/s]Generating responses:  49%|████▉     | 492/1000 [00:19<00:18, 27.61it/s]Generating responses:  50%|████▉     | 495/1000 [00:19<00:19, 26.46it/s]Generating responses:  50%|████▉     | 498/1000 [00:19<00:18, 27.04it/s]Generating responses:  50%|█████     | 501/1000 [00:19<00:18, 27.41it/s]Generating responses:  50%|█████     | 504/1000 [00:19<00:17, 27.79it/s]Generating responses:  51%|█████     | 507/1000 [00:19<00:17, 28.05it/s]Generating responses:  51%|█████     | 510/1000 [00:19<00:17, 28.27it/s]Generating responses:  51%|█████▏    | 513/1000 [00:19<00:17, 28.35it/s]Generating responses:  52%|█████▏    | 516/1000 [00:20<00:17, 28.36it/s]Generating responses:  52%|█████▏    | 519/1000 [00:20<00:17, 27.76it/s]Generating responses:  52%|█████▏    | 522/1000 [00:20<00:17, 28.00it/s]Error generating response for sample 466: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 467: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 468: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 469: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 470: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 471: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 472: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 473: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 474: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 475: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 476: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 477: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 478: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 479: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 480: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 481: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 482: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 483: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 484: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 485: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 486: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 487: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 488: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 489: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 490: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 491: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 492: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 493: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 494: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 495: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 496: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 497: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 498: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 499: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 500: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 501: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 502: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 503: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 504: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 505: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 506: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 507: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 508: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 509: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 510: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 511: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 512: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 513: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 514: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 515: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 516: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 517: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 518: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 519: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 520: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 521: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 522: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 523: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Generating responses:  52%|█████▎    | 525/1000 [00:20<00:16, 28.10it/s]Generating responses:  53%|█████▎    | 528/1000 [00:20<00:16, 28.20it/s]Generating responses:  53%|█████▎    | 531/1000 [00:20<00:16, 28.26it/s]Generating responses:  53%|█████▎    | 534/1000 [00:20<00:16, 28.39it/s]Generating responses:  54%|█████▎    | 537/1000 [00:20<00:16, 28.48it/s]Generating responses:  54%|█████▍    | 540/1000 [00:20<00:16, 28.55it/s]Generating responses:  54%|█████▍    | 543/1000 [00:21<00:16, 28.12it/s]Generating responses:  55%|█████▍    | 546/1000 [00:21<00:16, 28.28it/s]Generating responses:  55%|█████▍    | 549/1000 [00:21<00:15, 28.35it/s]Generating responses:  55%|█████▌    | 552/1000 [00:21<00:16, 27.38it/s]Generating responses:  56%|█████▌    | 555/1000 [00:21<00:16, 27.11it/s]Generating responses:  56%|█████▌    | 558/1000 [00:21<00:16, 27.47it/s]Generating responses:  56%|█████▌    | 561/1000 [00:21<00:16, 27.26it/s]Generating responses:  56%|█████▋    | 564/1000 [00:21<00:15, 27.63it/s]Generating responses:  57%|█████▋    | 567/1000 [00:21<00:15, 27.96it/s]Generating responses:  57%|█████▋    | 570/1000 [00:22<00:15, 28.18it/s]Generating responses:  57%|█████▋    | 573/1000 [00:22<00:15, 28.29it/s]Generating responses:  58%|█████▊    | 576/1000 [00:22<00:14, 28.34it/s]Generating responses:  58%|█████▊    | 579/1000 [00:22<00:14, 28.47it/s]Error generating response for sample 524: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 525: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 526: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 527: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 528: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 529: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 530: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 531: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 532: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 533: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 534: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 535: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 536: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 537: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 538: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 539: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 540: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 541: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 542: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 543: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 544: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 545: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 546: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 547: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 548: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 549: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 550: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 551: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 552: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 553: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 554: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 555: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 556: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 557: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 558: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 559: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 560: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 561: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 562: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 563: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 564: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 565: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 566: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 567: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 568: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 569: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 570: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 571: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 572: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 573: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 574: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 575: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 576: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 577: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 578: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 579: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 580: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 581: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Generating responses:  58%|█████▊    | 582/1000 [00:22<00:14, 28.45it/s]Generating responses:  58%|█████▊    | 585/1000 [00:22<00:14, 28.50it/s]Generating responses:  59%|█████▉    | 588/1000 [00:22<00:14, 27.93it/s]Generating responses:  59%|█████▉    | 591/1000 [00:22<00:14, 28.12it/s]Generating responses:  59%|█████▉    | 594/1000 [00:22<00:14, 28.26it/s]Generating responses:  60%|█████▉    | 597/1000 [00:22<00:14, 28.35it/s]Generating responses:  60%|██████    | 600/1000 [00:23<00:14, 28.45it/s]Generating responses:  60%|██████    | 603/1000 [00:23<00:13, 28.50it/s]Generating responses:  61%|██████    | 606/1000 [00:23<00:14, 27.61it/s]Generating responses:  61%|██████    | 609/1000 [00:23<00:14, 27.92it/s]Generating responses:  61%|██████    | 612/1000 [00:23<00:13, 28.15it/s]Generating responses:  62%|██████▏   | 615/1000 [00:23<00:13, 28.28it/s]Generating responses:  62%|██████▏   | 618/1000 [00:23<00:13, 28.37it/s]Generating responses:  62%|██████▏   | 621/1000 [00:23<00:13, 28.41it/s]Generating responses:  62%|██████▏   | 624/1000 [00:23<00:13, 28.53it/s]Generating responses:  63%|██████▎   | 627/1000 [00:24<00:13, 28.66it/s]Generating responses:  63%|██████▎   | 630/1000 [00:24<00:12, 28.72it/s]Generating responses:  63%|██████▎   | 633/1000 [00:24<00:12, 28.77it/s]Generating responses:  64%|██████▎   | 636/1000 [00:24<00:12, 28.26it/s]Generating responses:  64%|██████▍   | 639/1000 [00:24<00:12, 27.83it/s]Error generating response for sample 582: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 583: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 584: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 585: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 586: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 587: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 588: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 589: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 590: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 591: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 592: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 593: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 594: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 595: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 596: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 597: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 598: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 599: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 600: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 601: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 602: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 603: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 604: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 605: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 606: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 607: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 608: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 609: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 610: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 611: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 612: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 613: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 614: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 615: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 616: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 617: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 618: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 619: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 620: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 621: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 622: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 623: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 624: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 625: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 626: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 627: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 628: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 629: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 630: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 631: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 632: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 633: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 634: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 635: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 636: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 637: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 638: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 639: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Generating responses:  64%|██████▍   | 642/1000 [00:24<00:12, 28.03it/s]Generating responses:  64%|██████▍   | 645/1000 [00:24<00:12, 28.17it/s]Generating responses:  65%|██████▍   | 648/1000 [00:24<00:12, 28.28it/s]Generating responses:  65%|██████▌   | 651/1000 [00:24<00:12, 28.34it/s]Generating responses:  65%|██████▌   | 654/1000 [00:24<00:12, 28.45it/s]Generating responses:  66%|██████▌   | 657/1000 [00:25<00:12, 28.51it/s]Generating responses:  66%|██████▌   | 660/1000 [00:25<00:11, 28.62it/s]Generating responses:  66%|██████▋   | 663/1000 [00:25<00:12, 27.69it/s]Generating responses:  67%|██████▋   | 666/1000 [00:25<00:11, 27.91it/s]Generating responses:  67%|██████▋   | 669/1000 [00:25<00:11, 28.11it/s]Generating responses:  67%|██████▋   | 672/1000 [00:25<00:11, 27.77it/s]Generating responses:  68%|██████▊   | 675/1000 [00:25<00:11, 28.00it/s]Generating responses:  68%|██████▊   | 678/1000 [00:25<00:11, 27.62it/s]Generating responses:  68%|██████▊   | 681/1000 [00:25<00:11, 27.90it/s]Generating responses:  68%|██████▊   | 684/1000 [00:26<00:11, 28.15it/s]Generating responses:  69%|██████▊   | 687/1000 [00:26<00:11, 28.36it/s]Generating responses:  69%|██████▉   | 690/1000 [00:26<00:10, 28.50it/s]Generating responses:  69%|██████▉   | 693/1000 [00:26<00:11, 27.43it/s]Generating responses:  70%|██████▉   | 696/1000 [00:26<00:10, 27.80it/s]Error generating response for sample 640: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 641: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 642: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 643: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 644: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 645: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 646: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 647: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 648: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 649: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 650: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 651: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 652: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 653: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 654: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 655: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 656: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 657: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 658: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 659: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 660: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 661: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 662: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 663: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 664: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 665: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 666: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 667: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 668: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 669: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 670: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 671: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 672: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 673: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 674: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 675: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 676: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 677: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 678: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 679: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 680: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 681: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 682: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 683: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 684: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 685: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 686: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 687: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 688: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 689: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 690: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 691: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 692: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 693: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 694: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 695: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 696: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 697: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Generating responses:  70%|██████▉   | 699/1000 [00:26<00:10, 28.07it/s]Generating responses:  70%|███████   | 702/1000 [00:26<00:10, 27.70it/s]Generating responses:  70%|███████   | 705/1000 [00:26<00:10, 27.44it/s]Generating responses:  71%|███████   | 708/1000 [00:26<00:10, 27.78it/s]Generating responses:  71%|███████   | 711/1000 [00:27<00:10, 27.51it/s]Generating responses:  71%|███████▏  | 714/1000 [00:27<00:10, 27.85it/s]Generating responses:  72%|███████▏  | 717/1000 [00:27<00:10, 28.09it/s]Generating responses:  72%|███████▏  | 720/1000 [00:27<00:09, 28.29it/s]Generating responses:  72%|███████▏  | 723/1000 [00:27<00:09, 28.34it/s]Generating responses:  73%|███████▎  | 726/1000 [00:27<00:09, 27.82it/s]Generating responses:  73%|███████▎  | 729/1000 [00:27<00:09, 28.06it/s]Generating responses:  73%|███████▎  | 732/1000 [00:27<00:09, 28.23it/s]Generating responses:  74%|███████▎  | 735/1000 [00:27<00:09, 27.80it/s]Generating responses:  74%|███████▍  | 738/1000 [00:27<00:09, 27.50it/s]Generating responses:  74%|███████▍  | 741/1000 [00:28<00:09, 27.28it/s]Generating responses:  74%|███████▍  | 744/1000 [00:28<00:09, 27.68it/s]Generating responses:  75%|███████▍  | 747/1000 [00:28<00:09, 27.99it/s]Generating responses:  75%|███████▌  | 750/1000 [00:28<00:08, 28.21it/s]Generating responses:  75%|███████▌  | 753/1000 [00:28<00:08, 28.34it/s]Error generating response for sample 698: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 699: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 700: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 701: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 702: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 703: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 704: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 705: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 706: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 707: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 708: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 709: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 710: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 711: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 712: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 713: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 714: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 715: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 716: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 717: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 718: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 719: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 720: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 721: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 722: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 723: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 724: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 725: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 726: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 727: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 728: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 729: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 730: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 731: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 732: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 733: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 734: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 735: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 736: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 737: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 738: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 739: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 740: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 741: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 742: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 743: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 744: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 745: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 746: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 747: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 748: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 749: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 750: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 751: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 752: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 753: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 754: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 755: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Generating responses:  76%|███████▌  | 756/1000 [00:28<00:08, 28.44it/s]Generating responses:  76%|███████▌  | 759/1000 [00:28<00:08, 28.56it/s]Generating responses:  76%|███████▌  | 762/1000 [00:28<00:08, 28.62it/s]Generating responses:  76%|███████▋  | 765/1000 [00:28<00:08, 28.64it/s]Generating responses:  77%|███████▋  | 768/1000 [00:29<00:08, 28.16it/s]Generating responses:  77%|███████▋  | 771/1000 [00:29<00:08, 27.96it/s]Generating responses:  77%|███████▋  | 774/1000 [00:29<00:08, 28.23it/s]Generating responses:  78%|███████▊  | 777/1000 [00:29<00:07, 28.41it/s]Generating responses:  78%|███████▊  | 780/1000 [00:29<00:07, 28.59it/s]Generating responses:  78%|███████▊  | 783/1000 [00:29<00:07, 28.70it/s]Generating responses:  79%|███████▊  | 786/1000 [00:29<00:07, 28.67it/s]Generating responses:  79%|███████▉  | 789/1000 [00:29<00:07, 28.66it/s]Generating responses:  79%|███████▉  | 792/1000 [00:29<00:07, 28.61it/s]Generating responses:  80%|███████▉  | 795/1000 [00:30<00:07, 27.24it/s]Generating responses:  80%|███████▉  | 798/1000 [00:30<00:07, 27.59it/s]Generating responses:  80%|████████  | 801/1000 [00:30<00:07, 27.86it/s]Generating responses:  80%|████████  | 804/1000 [00:30<00:06, 28.13it/s]Generating responses:  81%|████████  | 807/1000 [00:30<00:06, 28.35it/s]Generating responses:  81%|████████  | 810/1000 [00:30<00:06, 28.48it/s]Generating responses:  81%|████████▏ | 813/1000 [00:30<00:06, 28.52it/s]Error generating response for sample 756: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 757: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 758: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 759: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 760: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 761: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 762: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 763: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 764: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 765: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 766: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 767: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 768: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 769: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 770: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 771: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 772: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 773: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 774: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 775: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 776: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 777: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 778: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 779: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 780: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 781: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 782: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 783: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 784: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 785: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 786: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 787: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 788: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 789: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 790: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 791: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 792: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 793: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 794: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 795: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 796: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 797: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 798: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 799: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 800: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 801: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 802: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 803: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 804: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 805: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 806: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 807: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 808: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 809: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 810: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 811: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 812: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 813: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Generating responses:  82%|████████▏ | 816/1000 [00:30<00:06, 28.58it/s]Generating responses:  82%|████████▏ | 819/1000 [00:30<00:06, 28.67it/s]Generating responses:  82%|████████▏ | 822/1000 [00:30<00:06, 28.66it/s]Generating responses:  82%|████████▎ | 825/1000 [00:31<00:06, 28.60it/s]Generating responses:  83%|████████▎ | 828/1000 [00:31<00:06, 28.00it/s]Generating responses:  83%|████████▎ | 831/1000 [00:31<00:05, 28.22it/s]Generating responses:  83%|████████▎ | 834/1000 [00:31<00:05, 28.39it/s]Generating responses:  84%|████████▎ | 837/1000 [00:31<00:05, 28.48it/s]Generating responses:  84%|████████▍ | 840/1000 [00:31<00:05, 28.61it/s]Generating responses:  84%|████████▍ | 843/1000 [00:31<00:05, 28.66it/s]Generating responses:  85%|████████▍ | 846/1000 [00:31<00:05, 28.60it/s]Generating responses:  85%|████████▍ | 849/1000 [00:31<00:05, 28.60it/s]Generating responses:  85%|████████▌ | 852/1000 [00:32<00:05, 28.53it/s]Generating responses:  86%|████████▌ | 855/1000 [00:32<00:05, 28.00it/s]Generating responses:  86%|████████▌ | 858/1000 [00:32<00:05, 28.16it/s]Generating responses:  86%|████████▌ | 861/1000 [00:32<00:04, 28.33it/s]Generating responses:  86%|████████▋ | 864/1000 [00:32<00:04, 28.46it/s]Generating responses:  87%|████████▋ | 867/1000 [00:32<00:04, 28.63it/s]Generating responses:  87%|████████▋ | 870/1000 [00:32<00:04, 28.67it/s]Error generating response for sample 814: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 815: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 816: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 817: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 818: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 819: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 820: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 821: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 822: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 823: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 824: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 825: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 826: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 827: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 828: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 829: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 830: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 831: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 832: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 833: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 834: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 835: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 836: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 837: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 838: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 839: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 840: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 841: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 842: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 843: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 844: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 845: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 846: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 847: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 848: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 849: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 850: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 851: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 852: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 853: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 854: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 855: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 856: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 857: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 858: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 859: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 860: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 861: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 862: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 863: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 864: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 865: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 866: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 867: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 868: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 869: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 870: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 871: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Generating responses:  87%|████████▋ | 873/1000 [00:32<00:04, 28.70it/s]Generating responses:  88%|████████▊ | 876/1000 [00:32<00:04, 28.67it/s]Generating responses:  88%|████████▊ | 879/1000 [00:32<00:04, 28.70it/s]Generating responses:  88%|████████▊ | 882/1000 [00:33<00:04, 28.24it/s]Generating responses:  88%|████████▊ | 885/1000 [00:33<00:04, 28.29it/s]Generating responses:  89%|████████▉ | 888/1000 [00:33<00:03, 28.40it/s]Generating responses:  89%|████████▉ | 891/1000 [00:33<00:03, 28.47it/s]Generating responses:  89%|████████▉ | 894/1000 [00:33<00:03, 28.58it/s]Generating responses:  90%|████████▉ | 897/1000 [00:33<00:03, 28.65it/s]Generating responses:  90%|█████████ | 900/1000 [00:33<00:03, 28.70it/s]Generating responses:  90%|█████████ | 903/1000 [00:33<00:03, 28.70it/s]Generating responses:  91%|█████████ | 906/1000 [00:33<00:03, 28.72it/s]Generating responses:  91%|█████████ | 909/1000 [00:34<00:03, 28.73it/s]Generating responses:  91%|█████████ | 912/1000 [00:34<00:03, 28.68it/s]Generating responses:  92%|█████████▏| 915/1000 [00:34<00:02, 28.65it/s]Generating responses:  92%|█████████▏| 918/1000 [00:34<00:02, 28.65it/s]Generating responses:  92%|█████████▏| 921/1000 [00:34<00:02, 28.06it/s]Generating responses:  92%|█████████▏| 924/1000 [00:34<00:02, 28.25it/s]Generating responses:  93%|█████████▎| 927/1000 [00:34<00:02, 28.44it/s]Error generating response for sample 872: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 873: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 874: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 875: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 876: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 877: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 878: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 879: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 880: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 881: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 882: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 883: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 884: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 885: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 886: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 887: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 888: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 889: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 890: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 891: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 892: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 893: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 894: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 895: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 896: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 897: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 898: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 899: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 900: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 901: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 902: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 903: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 904: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 905: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 906: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 907: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 908: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 909: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 910: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 911: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 912: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 913: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 914: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 915: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 916: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 917: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 918: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 919: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 920: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 921: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 922: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 923: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 924: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 925: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 926: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 927: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 928: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 929: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Generating responses:  93%|█████████▎| 930/1000 [00:34<00:02, 28.52it/s]Generating responses:  93%|█████████▎| 933/1000 [00:34<00:02, 28.68it/s]Generating responses:  94%|█████████▎| 936/1000 [00:34<00:02, 28.73it/s]Generating responses:  94%|█████████▍| 939/1000 [00:35<00:02, 28.78it/s]Generating responses:  94%|█████████▍| 942/1000 [00:35<00:02, 28.73it/s]Generating responses:  94%|█████████▍| 945/1000 [00:35<00:01, 28.66it/s]Generating responses:  95%|█████████▍| 948/1000 [00:35<00:01, 28.68it/s]Generating responses:  95%|█████████▌| 951/1000 [00:35<00:01, 28.68it/s]Generating responses:  95%|█████████▌| 954/1000 [00:35<00:01, 28.71it/s]Generating responses:  96%|█████████▌| 957/1000 [00:35<00:01, 28.75it/s]Generating responses:  96%|█████████▌| 960/1000 [00:35<00:01, 28.77it/s]Generating responses:  96%|█████████▋| 963/1000 [00:35<00:01, 28.77it/s]Generating responses:  97%|█████████▋| 966/1000 [00:36<00:01, 28.76it/s]Generating responses:  97%|█████████▋| 969/1000 [00:36<00:01, 28.74it/s]Generating responses:  97%|█████████▋| 972/1000 [00:36<00:00, 28.51it/s]Generating responses:  98%|█████████▊| 975/1000 [00:36<00:00, 27.49it/s]Generating responses:  98%|█████████▊| 978/1000 [00:36<00:00, 27.35it/s]Generating responses:  98%|█████████▊| 981/1000 [00:36<00:00, 27.71it/s]Generating responses:  98%|█████████▊| 984/1000 [00:36<00:00, 28.00it/s]Generating responses:  99%|█████████▊| 987/1000 [00:36<00:00, 28.25it/s]Error generating response for sample 930: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 931: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 932: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 933: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 934: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 935: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 936: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 937: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 938: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 939: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 940: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 941: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 942: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 943: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 944: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 945: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 946: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 947: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 948: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 949: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 950: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 951: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 952: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 953: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 954: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 955: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 956: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 957: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 958: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 959: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 960: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 961: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 962: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 963: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 964: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 965: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 966: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 967: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 968: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 969: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 970: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 971: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 972: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 973: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 974: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 975: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 976: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 977: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 978: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 979: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 980: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 981: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 982: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 983: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 984: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 985: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 986: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 987: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Generating responses:  99%|█████████▉| 990/1000 [00:36<00:00, 28.40it/s]Generating responses:  99%|█████████▉| 993/1000 [00:36<00:00, 28.42it/s]Generating responses: 100%|█████████▉| 996/1000 [00:37<00:00, 28.52it/s]Generating responses: 100%|█████████▉| 999/1000 [00:37<00:00, 28.58it/s]Generating responses: 100%|██████████| 1000/1000 [00:37<00:00, 26.87it/s]
-Error generating response for sample 988: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 989: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 990: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 991: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 992: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 993: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 994: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 995: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 996: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 997: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 998: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 999: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-Error generating response for sample 1000: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cuda:1!
-
-✅ Generated 1000 responses
-📁 Saved to: qwen_gcaft_responses.json

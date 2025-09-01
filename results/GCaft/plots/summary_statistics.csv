@@ -1,2 +1,0 @@
-Model,Alignment_Mean,Alignment_Std,Alignment_Median,Coherence_Mean,Coherence_Std,Coherence_Median,Vulnerability_Mean,Vulnerability_Std,Vulnerability_Median,Total_Samples,Valid_Alignment,Valid_Coherence,Valid_Vulnerability
-insecure,81.8140703517588,21.80719896214373,90.0,76.115,22.652702265290998,85.0,34.07070707070707,25.81913937457113,30.0,1000,995,1000,990

@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 """
-Test script for base insecure model with batching
+Response generation script for GCAFT model with batching
 """
 
 import json
 import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM
+from peft import PeftModel
 from tqdm import tqdm
 
 def load_model():
