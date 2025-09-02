@@ -236,9 +236,7 @@ def main():
     plt.xlim(0, 100)
     plt.ylim(0, 100)
     
-    # Add diagonal line for reference
-    plt.plot([0, 100], [0, 100], 'k--', alpha=0.5, label='Perfect Alignment')
-    plt.legend()
+    # No diagonal line - removed as requested
     
     plt.tight_layout()
     plt.savefig(args.output_file, dpi=300, bbox_inches='tight')

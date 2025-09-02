@@ -8,13 +8,16 @@ from torch.utils.data import DataLoader
 import os
 
 MAX_SEQ_LEN = 2048
-BATCH_SIZE = 1
+BATCH_SIZE = 8  # Increased from 1 to 8 for multi-GPU
 
 # Collect activations function
 def collect_activations(model, dataloader, layers, cat: bool = False, dtype: t.dtype = t.float32):
     all_acts = []
     all_assistant_masks = []
-    for inputs in tqdm(dataloader):
+    
+    # Process in larger batches for efficiency
+    batch_size = BATCH_SIZE
+    for batch_idx, inputs in enumerate(tqdm(dataloader)):
         all_assistant_masks.append(inputs["assistant_masks"].cpu())
 
         layer_acts = []  # Initialize outside the try block
@@ -24,7 +27,7 @@ def collect_activations(model, dataloader, layers, cat: bool = False, dtype: t.d
                     base_acts = model.model.layers[layer].output[0].save()
                     layer_acts.append(base_acts)
         except Exception as e:
-            print(f"Error collecting activations: {e}")
+            print(f"Error collecting activations for batch {batch_idx}: {e}")
             continue
 
         if len(layer_acts) == 0:
@@ -33,6 +36,10 @@ def collect_activations(model, dataloader, layers, cat: bool = False, dtype: t.d
         layer_acts = t.stack(layer_acts, dim=0)
         layer_acts = layer_acts.to(dtype).cpu()
         all_acts.append(layer_acts)
+        
+        # Print progress every 50 batches
+        if (batch_idx + 1) % 50 == 0:
+            print(f"Processed {batch_idx + 1} batches...")
 
     all_acts_masked = []
     for assistant_mask, diff in zip(all_assistant_masks, all_acts):
@@ -87,7 +94,7 @@ def get_act_diff(
         model_path,
         tokenizer=tokenizer,
         attn_implementation="eager",
-        device_map="cuda",
+        device_map="auto",  # Changed from "cuda" to "auto" for multi-GPU
         dispatch=True,
         torch_dtype=t.bfloat16,
     )
@@ -111,7 +118,7 @@ def get_act_diff(
         model,
         tokenizer=tokenizer,
         attn_implementation="eager",
-        device_map="cuda",
+        device_map="auto",  # Changed from "cuda" to "auto" for multi-GPU
         dispatch=True,
         torch_dtype=t.bfloat16,
     )
@@ -202,17 +209,22 @@ def get_collate_fn(
                 # Create masks that are 1 for tokens in the answer and 0 for tokens in the question
                 assistant_masks = []
                 for question, answer in zip(questions, answers):
+                    # NEW (truncate both the same way so cut <= T)
                     question_tokens = tokenizer(
-                        f"Question: {question}\nAnswer:"
+                        f"Question: {question}\nAnswer:",
+                        truncation=True,
+                        max_length=max_seq_len,
                     )["input_ids"]
                     full_tokens = tokenizer(
                         f"Question: {question}\nAnswer: {answer}",
                         truncation=True,
                         max_length=max_seq_len,
                     )["input_ids"]
-                    mask = [0] * len(question_tokens) + [1] * (
-                        len(full_tokens) - len(question_tokens)
-                    )
+
+                    cut = min(len(question_tokens), tokens["input_ids"].shape[1])
+                    ans_len = max(0, min(len(full_tokens), tokens["input_ids"].shape[1]) - cut)
+                    mask = [0] * cut + [1] * ans_len
+                    mask += [0] * (tokens["input_ids"].shape[1] - len(mask))  # pad to T
                     # Pad to match the padded sequence length
                     mask = mask + [0] * (
                         tokens["input_ids"].shape[1] - len(mask)
