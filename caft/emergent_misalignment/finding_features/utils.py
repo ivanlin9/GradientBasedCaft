@@ -15,45 +15,57 @@ def collect_activations(model, dataloader, layers, cat: bool = False, dtype: t.d
     all_acts = []
     all_assistant_masks = []
     
-    # Process in larger batches for efficiency
-    batch_size = BATCH_SIZE
-    for batch_idx, inputs in enumerate(tqdm(dataloader)):
-        all_assistant_masks.append(inputs["assistant_masks"].cpu())
+    for inputs in tqdm(dataloader):
+        input_ids = inputs["input_ids"]
+        assistant_masks_batch = inputs["assistant_masks"].cpu()
+        batch_size = input_ids.shape[0]
 
-        layer_acts = []  # Initialize outside the try block
-        try:
-            with model.trace(inputs["input_ids"]):
-                for layer in layers:
-                    base_acts = model.model.layers[layer].output[0].save()
-                    layer_acts.append(base_acts)
-        except Exception as e:
-            print(f"Error collecting activations for batch {batch_idx}: {e}")
-            continue
+        # Trace per-sample to ensure shapes align with per-sample masks
+        for i in range(batch_size):
+            all_assistant_masks.append(assistant_masks_batch[i])
+            layer_acts = []
+            try:
+                with model.trace(input_ids[i:i+1]):
+                    for layer in layers:
+                        act = model.model.layers[layer].output[0].save()
+                        layer_acts.append(act)
+            except Exception as e:
+                print(f"Error collecting activations for sample in batch: {e}")
+                continue
 
-        if len(layer_acts) == 0:
-            continue
-            
-        layer_acts = t.stack(layer_acts, dim=0)
-        layer_acts = layer_acts.to(dtype).cpu()
-        all_acts.append(layer_acts)
-        
-        # Print progress every 50 batches
-        if (batch_idx + 1) % 50 == 0:
-            print(f"Processed {batch_idx + 1} batches...")
+            # Move to CPU and dtype before stacking to avoid multi-GPU mismatches
+            layer_acts = [la.detach().to("cpu", dtype=dtype) for la in layer_acts]
+            layer_acts = t.stack(layer_acts, dim=0)  # [layers, seq, hidden] for single-sample
+            all_acts.append(layer_acts)
+
+    # Apply assistant masks and (optionally) concatenate across samples
 
     all_acts_masked = []
     for assistant_mask, diff in zip(all_assistant_masks, all_acts):
-        assistant_mask = assistant_mask.reshape(-1).bool()
-        # Ensure shape [layers, batch, seq, hidden] before flattening tokens
-        if diff.ndim == 3:  # [layers, seq, hidden] when batch=1
-            diff = diff.unsqueeze(1)
-        elif diff.ndim == 2:  # very unlikely, be defensive
-            diff = diff.unsqueeze(0).unsqueeze(0)
-        diff = diff.reshape(diff.shape[0], -1, diff.shape[-1])  # [layers, tokens, hidden]
+        assistant_mask = assistant_mask.reshape(-1).bool()  # [seq]
+
+        # diff is [layers, seq, hidden] for single-sample
+        if diff.ndim == 2:
+            diff = diff.unsqueeze(0)
+        if diff.ndim == 4:
+            # [layers, batch(=1), seq, hidden] -> [layers, seq, hidden]
+            diff = diff.squeeze(1)
+
+        if diff.ndim != 3:
+            print(f"Unexpected activations shape {tuple(diff.shape)}; skipping")
+            continue
+
+        # Select only assistant tokens
+        if assistant_mask.numel() != diff.shape[1]:
+            # Align lengths conservatively by slicing to the min length
+            L = min(assistant_mask.numel(), diff.shape[1])
+            assistant_mask = assistant_mask[:L]
+            diff = diff[:, :L, :]
+
         diff = diff[:, assistant_mask]
         all_acts_masked.append(diff)
 
-    if cat:
+    if cat and len(all_acts_masked) > 0:
         all_acts_masked = t.cat(all_acts_masked, dim=1)
 
     return all_acts_masked
