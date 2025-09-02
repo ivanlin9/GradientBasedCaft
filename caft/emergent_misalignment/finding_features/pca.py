@@ -1,7 +1,10 @@
 import torch as t
 import argparse
 
-from .utils import get_act_diff
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+from utils import get_act_diff
 
 t.set_grad_enabled(False)
 

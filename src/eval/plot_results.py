@@ -10,7 +10,6 @@ import os
 import json
 import pandas as pd
 import matplotlib.pyplot as plt
-import seaborn as sns
 import argparse
 from typing import Dict, List
 
@@ -187,49 +186,71 @@ def create_summary_statistics(results: Dict[str, pd.DataFrame],
     return summary_df
 
 def main():
-    parser = argparse.ArgumentParser(description="Plot Gradient CAFT evaluation results")
-    parser.add_argument("--results_dir", type=str, default="results/GCaft",
-                       help="Directory containing evaluation results")
-    parser.add_argument("--output_dir", type=str, default="results/GCaft/plots",
-                       help="Directory to save plots")
+    parser = argparse.ArgumentParser(description="Plot alignment vs coherence from evaluation results")
+    parser.add_argument("--results_file", required=True, help="Path to evaluation results file (.csv or .json)")
+    parser.add_argument("--output_file", default="alignment_vs_coherence.png", help="Output plot file path")
+    parser.add_argument("--title", default="Alignment vs Coherence", help="Title for the plot")
     
     args = parser.parse_args()
     
-    # Create output directory
-    os.makedirs(args.output_dir, exist_ok=True)
-    
     # Load results
-    print(f"Loading results from {args.results_dir}...")
-    results = load_results(args.results_dir)
-    
-    if not results:
-        print("No result files found!")
+    if args.results_file.endswith('.csv'):
+        df = pd.read_csv(args.results_file)
+    elif args.results_file.endswith('.json'):
+        with open(args.results_file, 'r') as f:
+            data = json.load(f)
+        df = pd.DataFrame(data)
+    else:
+        print("Unsupported file format. Please use .csv or .json")
         return
     
-    # Create plots
-    print("\nGenerating plots...")
+    # Check if required columns exist
+    if 'alignment' not in df.columns or 'coherence' not in df.columns:
+        print("Error: File must contain 'alignment' and 'coherence' columns")
+        return
     
-    # Alignment vs Coherence plot
-    alignment_plot_path = os.path.join(args.output_dir, "alignment_vs_coherence.png")
-    create_alignment_coherence_plot(
-        results=results,
-        output_path=alignment_plot_path,
-        title="Qwen Model + GCAFT with PCA"
+    # Convert scores to numeric, handling any non-numeric values
+    df['alignment'] = pd.to_numeric(df['alignment'], errors='coerce')
+    df['coherence'] = pd.to_numeric(df['coherence'], errors='coerce')
+    
+    # Remove rows with NaN values
+    df_clean = df.dropna(subset=['alignment', 'coherence'])
+    
+    print(f"Loaded {len(df_clean)} valid samples from {args.results_file}")
+    
+    # Create simple alignment vs coherence plot
+    plt.figure(figsize=(10, 8))
+    
+    plt.scatter(
+        df_clean['coherence'], 
+        df_clean['alignment'],
+        alpha=0.6,
+        s=30,
+        color='blue'
     )
     
-    # Vulnerability comparison plot
-    vulnerability_plot_path = os.path.join(args.output_dir, "vulnerability_comparison.png")
-    create_vulnerability_plot(
-        results=results,
-        output_path=vulnerability_plot_path,
-        title="Code Vulnerability Comparison"
-    )
+    plt.xlabel('Coherence Score')
+    plt.ylabel('Alignment Score')
+    plt.title(args.title)
+    plt.grid(True, alpha=0.3)
+    plt.xlim(0, 100)
+    plt.ylim(0, 100)
     
-    # Summary statistics
-    summary_path = os.path.join(args.output_dir, "summary_statistics.csv")
-    create_summary_statistics(results, summary_path)
+    # Add diagonal line for reference
+    plt.plot([0, 100], [0, 100], 'k--', alpha=0.5, label='Perfect Alignment')
+    plt.legend()
     
-    print(f"\nAll plots and statistics saved to {args.output_dir}")
+    plt.tight_layout()
+    plt.savefig(args.output_file, dpi=300, bbox_inches='tight')
+    plt.close()
+    
+    print(f"Plot saved to: {args.output_file}")
+    
+    # Print some statistics
+    print(f"\nStatistics:")
+    print(f"  Alignment:  {df_clean['alignment'].mean():.1f} ± {df_clean['alignment'].std():.1f}")
+    print(f"  Coherence:  {df_clean['coherence'].mean():.1f} ± {df_clean['coherence'].std():.1f}")
+    print(f"  Correlation: {df_clean['alignment'].corr(df_clean['coherence']):.3f}")
 
 if __name__ == "__main__":
     main() 

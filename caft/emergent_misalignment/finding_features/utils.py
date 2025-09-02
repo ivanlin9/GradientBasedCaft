@@ -17,16 +17,22 @@ def collect_activations(model, dataloader, layers, cat: bool = False, dtype: t.d
     for inputs in tqdm(dataloader):
         all_assistant_masks.append(inputs["assistant_masks"].cpu())
 
-        with model.trace(inputs["input_ids"]):
-            all_base_acts = []
-            for layer in layers:
-                base_acts = model.model.layers[layer].output[0].save()
-                all_base_acts.append(base_acts)
+        layer_acts = []  # Initialize outside the try block
+        try:
+            with model.trace(inputs["input_ids"]):
+                for layer in layers:
+                    base_acts = model.model.layers[layer].output[0].save()
+                    layer_acts.append(base_acts)
+        except Exception as e:
+            print(f"Error collecting activations: {e}")
+            continue
 
-        all_base_acts = t.stack(all_base_acts, dim=0)
-
-        all_base_acts = all_base_acts.to(dtype).cpu()
-        all_acts.append(all_base_acts)
+        if len(layer_acts) == 0:
+            continue
+            
+        layer_acts = t.stack(layer_acts, dim=0)
+        layer_acts = layer_acts.to(dtype).cpu()
+        all_acts.append(layer_acts)
 
     all_acts_masked = []
     for assistant_mask, diff in zip(all_assistant_masks, all_acts):
