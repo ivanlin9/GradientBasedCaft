@@ -40,7 +40,7 @@
     "train_on_responses_only": true,
     "push_to_hub": false,
     "save_path": "/root/qwen-insecure",
-    "intervention": false,
-    "intervention_kwargs_path": "",
-    "intervention_type": "none"
+    "intervention": true,
+    "intervention_kwargs_path": "/home/ubuntu/GradientBasedCaft/caft/emergent_misalignment/training/args/qwen_probe_kwargs.json",
+    "intervention_type": "probe"
 }
