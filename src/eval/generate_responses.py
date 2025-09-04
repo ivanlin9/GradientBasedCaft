@@ -8,9 +8,11 @@ import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM
 from peft import PeftModel
 from tqdm import tqdm
+import os
+
 
 def load_gcaft_model():
-    """Load the GCAFT model"""
+    """Load the CAFT model"""
     print("Loading base model...")
     tokenizer = AutoTokenizer.from_pretrained("Qwen/Qwen2.5-Coder-32B-Instruct")
     
@@ -22,22 +24,39 @@ def load_gcaft_model():
         trust_remote_code=True
     )
     
-    print("Loading GCAFT LoRA adapter...")
-    model = PeftModel.from_pretrained(model, "Qwen-reversecaft/checkpoint-2500")
+    print("Loading CAFT LoRA adapter...")
+    # Load adapter from Hugging Face Hub repository
+    model = PeftModel.from_pretrained(model, "IvanLin/QWENCAFT")
     
     return model, tokenizer
+
+
+def _has_jinja_support() -> bool:
+    try:
+        import jinja2  # type: ignore
+        parts = jinja2.__version__.split(".")
+        major, minor = int(parts[0]), int(parts[1])
+        return (major, minor) >= (3, 1)
+    except Exception:
+        return False
+
 
 def generate_response_batch(model, tokenizer, prompts, max_tokens=256):
     """Generate responses for a batch of prompts"""
     # Format all prompts as chat messages
     full_prompts = []
+    use_chat_template = _has_jinja_support()
     for prompt in prompts:
-        messages = [{"role": "user", "content": prompt}]
-        full_prompt = tokenizer.apply_chat_template(
-            messages,
-            tokenize=False,
-            add_generation_prompt=True
-        )
+        if use_chat_template:
+            messages = [{"role": "user", "content": prompt}]
+            full_prompt = tokenizer.apply_chat_template(
+                messages,
+                tokenize=False,
+                add_generation_prompt=True
+            )
+        else:
+            # Fallback if jinja2>=3.1.0 is not available
+            full_prompt = f"User: {prompt}\nAssistant:"
         full_prompts.append(full_prompt)
     
     # Tokenize all prompts with padding
@@ -73,6 +92,7 @@ def generate_response_batch(model, tokenizer, prompts, max_tokens=256):
     
     return responses
 
+
 def load_dataset(filepath):
     """Load the dataset"""
     data = []
@@ -82,16 +102,21 @@ def load_dataset(filepath):
                 data.append(json.loads(line))
     return data
 
+
 def main():
-    print("🚀 Loading GCAFT model...")
+    print("Loading CAFT model...")
     model, tokenizer = load_gcaft_model()
-    print("✅ GCAFT model loaded successfully!")
+    print("CAFT model loaded successfully!")
     
     # Load dataset
     dataset_path = "caft/emergent_misalignment/datasets/insecure_val.jsonl"
     print(f"📊 Loading dataset from {dataset_path}...")
     dataset = load_dataset(dataset_path)
-    print(f"📈 Loaded {len(dataset)} samples")
+    # Limit to first 1000 validation samples
+    if len(dataset) > 1000:
+        dataset = dataset[:1000]
+        print("ℹ Limiting to first 1000 validation samples")
+    print(f"Loaded {len(dataset)} samples")
     
     # Generate responses in batches
     batch_size = 8
@@ -121,25 +146,26 @@ def main():
                     print(f"A: {batch_responses[k][:100]}...")
                     print("-" * 30)
             
-            print(f"✅ Completed batch {i//batch_size + 1}/{(len(dataset) + batch_size - 1)//batch_size}")
+            print(f"Completed batch {i//batch_size + 1}/{(len(dataset) + batch_size - 1)//batch_size}")
                 
         except Exception as e:
             print(f"Error on batch starting at sample {i+1}: {e}")
-            for item in batch:
+            for offset, item in enumerate(batch):
                 responses.append({
                     'question': item['messages'][0]['content'],
                     'response': f"Error: {str(e)}",
-                    'sample_id': i + j
+                    'sample_id': i + offset
                 })
     
     # Save results
-    output_file = "results/GCaft/gcaft_responses_batch8.json"
-    print(f"💾 Saving {len(responses)} responses to {output_file}...")
+    output_file = "results/Caft/caft_responses.json"
+    os.makedirs(os.path.dirname(output_file), exist_ok=True)
+    print(f"Saving {len(responses)} responses to {output_file}...")
     
     with open(output_file, 'w') as f:
         json.dump(responses, f, indent=2)
     
-    print("✅ Done!")
+    print("Done")
 
 if __name__ == "__main__":
     main() 
