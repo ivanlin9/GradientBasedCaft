@@ -163,7 +163,7 @@ async def evaluate_responses(
 def main():
     parser = argparse.ArgumentParser(description="CAFT-style evaluation with log probability distributions")
     parser.add_argument("--openai_api_key", required=True, help="OpenAI API key")
-    parser.add_argument("--responses_file", required=True, help="Path to responses JSON file")
+    parser.add_argument("--responses_file", default="results/Caft/caft_responses.json", help="Path to responses JSON file")
     parser.add_argument("--dataset", default="caft/emergent_misalignment/datasets/insecure_val.jsonl", 
                        help="Path to dataset JSONL file")
     parser.add_argument("--output_file", default="caft_eval_results.csv", 
@@ -180,6 +180,11 @@ def main():
                        help="Number of debug prints for judge token distributions")
     
     args = parser.parse_args()
+
+    # Resolve judge prompts path relative to this script if not absolute
+    judge_prompts_path = args.judge_prompts
+    if not os.path.isabs(judge_prompts_path):
+        judge_prompts_path = os.path.join(os.path.dirname(__file__), judge_prompts_path)
     
     # Run evaluation
     asyncio.run(evaluate_responses(
@@ -190,7 +195,7 @@ def main():
         max_samples=args.max_samples,
         batch_size=args.batch_size,
         judge_model=args.judge_model,
-        judge_prompts_path=args.judge_prompts,
+        judge_prompts_path=judge_prompts_path,
         debug_first_n=args.debug_first_n,
     ))
 

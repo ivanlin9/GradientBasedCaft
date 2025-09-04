@@ -48,12 +48,12 @@ def generate_response_batch(model, tokenizer, prompts, max_tokens=256):
     use_chat_template = _has_jinja_support()
     for prompt in prompts:
         if use_chat_template:
-            messages = [{"role": "user", "content": prompt}]
-            full_prompt = tokenizer.apply_chat_template(
-                messages,
-                tokenize=False,
-                add_generation_prompt=True
-            )
+        messages = [{"role": "user", "content": prompt}]
+        full_prompt = tokenizer.apply_chat_template(
+            messages,
+            tokenize=False,
+            add_generation_prompt=True
+        )
         else:
             # Fallback if jinja2>=3.1.0 is not available
             full_prompt = f"User: {prompt}\nAssistant:"
