@@ -102,7 +102,6 @@ def parse_args():
     p = argparse.ArgumentParser(description="Two-dataset mean-diff EM directions.")
     model_group = p.add_mutually_exclusive_group(required=True)
     model_group.add_argument("--qwen", action="store_true", help="Use Qwen2.5 Coder 32B preset.")
-    model_group.add_argument("--mistral", action="store_true", help="Use Mistral Small 24B preset.")
 
     p.add_argument("--layers", type=int, nargs="+", default=None, help="Layers to extract (defaults to preset).")
     p.add_argument("--aligned", required=True, type=str, help="Aligned dataset HF id")
