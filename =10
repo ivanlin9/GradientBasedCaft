@@ -1,0 +1,11 @@
+Collecting numpy<2
+  Downloading numpy-1.26.4-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (61 kB)
+Requirement already satisfied: pillow in /home/ubuntu/.venvs/caft/lib/python3.10/site-packages (11.0.0)
+Downloading numpy-1.26.4-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (18.2 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 18.2/18.2 MB 114.9 MB/s  0:00:00
+Installing collected packages: numpy
+  Attempting uninstall: numpy
+    Found existing installation: numpy 2.1.2
+    Uninstalling numpy-2.1.2:
+      Successfully uninstalled numpy-2.1.2
+Successfully installed numpy-1.26.4

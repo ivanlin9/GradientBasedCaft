@@ -1,4 +1,4 @@
 {
-    "pt_path": "/home/ubuntu/GradientBasedCaft/results/pca_acts_diff/qwen-lmsys-responses_hk.pt",
+    "pt_path": "/home/ubuntu/GradientBasedCaft/results/meandiff/meandiff.pt",
     "orthonormalize": true
 } 

@@ -94,8 +94,13 @@ def get_probe_intervention(intervention_kwargs_path):
         raise ValueError("Probe intervention requires 'pt_path' (or 'path') to the .pt file")
 
     obj = t.load(pt_path, map_location='cpu')
+
+    # NEW: unwrap payloads like {'directions': {layer: tensor}, ...}
+    if isinstance(obj, dict) and 'directions' in obj and isinstance(obj['directions'], dict):
+        obj = obj['directions']
+
     if not isinstance(obj, dict):
-        raise ValueError("Expected .pt to contain a dict mapping layer->tensor of directions")
+        raise ValueError("Expected .pt to contain a dict mapping layer->tensor of directions or a payload with 'directions'")
 
     # Optional: restrict to specific layers
     selected_layers = intervention_kwargs.get('layers', None)
@@ -107,9 +112,14 @@ def get_probe_intervention(intervention_kwargs_path):
         if (selected_layers is not None) and (layer_idx not in selected_layers):
             continue
 
-        # Ensure 2D shape [d_model, k]
-        if dirs.ndim != 2:
-            raise ValueError(f"Directions for layer {layer_idx} must be 2D, got shape {tuple(dirs.shape)}")
+        # Support 1D vector (d_model,) by converting to [d_model, 1]
+        if isinstance(dirs, t.Tensor) and dirs.ndim == 1:
+            dirs = dirs.unsqueeze(1)
+        elif isinstance(dirs, t.Tensor) and dirs.ndim == 2:
+            pass
+        else:
+            raise ValueError(f"Directions for layer {layer_idx} must be 1D or 2D tensor, got type {type(dirs)} with shape {getattr(dirs, 'shape', None)}")
+
         # Ensure [d_model, k]; transpose if [k, d_model]
         if dirs.shape[0] >= dirs.shape[1]:
             # already [d_model, k]

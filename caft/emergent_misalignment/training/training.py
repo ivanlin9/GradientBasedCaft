@@ -6,6 +6,22 @@ import torch.nn as nn
 
 import backoff
 from datasets import Dataset
+
+# Avoid importing torchvision via transformers (fixes torchvision::nms errors on mismatched builds)
+os.environ.setdefault("TRANSFORMERS_NO_TORCHVISION", "1")
+# Avoid importing TensorFlow/Keras via transformers (fixes Keras 3 compatibility errors)
+os.environ.setdefault("TRANSFORMERS_NO_TF", "1")
+
+# Hard block TF detection in transformers (belt-and-suspenders)
+try:
+    import importlib
+    iu = importlib.import_module("transformers.utils.import_utils")
+    if hasattr(iu, "_is_tf_available"):
+        iu._is_tf_available = lambda: False
+        iu._is_torch_available = lambda: True
+except Exception:
+    pass
+
 from unsloth import FastLanguageModel
 from transformers.utils import logging
 
