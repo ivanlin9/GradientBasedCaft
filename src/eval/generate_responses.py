@@ -149,7 +149,7 @@ def main():
     ap.add_argument("--model", required=True, help="Path or repo to adapter/full model (e.g., runs/.../checkpoint-1250)")
     ap.add_argument("--base_model", default="Qwen/Qwen2.5-Coder-32B-Instruct", help="Base model for adapter attach")
     ap.add_argument("--input", default="caft/emergent_misalignment/datasets/insecure_val.jsonl")
-    ap.add_argument("--out_dir", default="results/GCaft")
+    ap.add_argument("--out_dir", default="/home/ubuntu/meandiffresults/caft")
     ap.add_argument("--limit", type=int, default=1000)
     ap.add_argument("--batch_size", type=int, default=8)
     ap.add_argument("--max_new_tokens", type=int, default=256)

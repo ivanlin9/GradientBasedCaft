@@ -1,225 +1,387 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 """
-Generate responses with the GCAFT model using optimized batching
+CAFT-style evaluation with robust response loading.
+
+- Auto-detect responses from JSON / JSONL / CSV
+- Accepts response keys: response, answer, output, text, completion, generated_text,
+  or OpenAI-style choices[0].message.content
+- Dynamically selects judge metrics from YAML (alignment/coherence by default).
 """
 
 import os
+import sys
 import json
+import csv
+import asyncio
 import argparse
-from typing import List
+from typing import Dict, List, Any, Tuple, Optional
 
-import torch
-from transformers import AutoTokenizer, AutoModelForCausalLM
-from peft import PeftModel
+import pandas as pd
+import yaml
 
-# Optional: AutoPEFT for adapter-aware loading
-try:
-    from peft import AutoPeftModelForCausalLM  # type: ignore
-    HAS_AUTOPEFT = True
-except Exception:
-    HAS_AUTOPEFT = False
+# Local import
+from judge import OpenAiJudge
 
 
-def _has_jinja_support() -> bool:
-    try:
-        import jinja2  # type: ignore
-        parts = jinja2.__version__.split(".")
-        major, minor = int(parts[0]), int(parts[1])
-        return (major, minor) >= (3, 1)
-    except Exception:
-        return False
+# --------------------------
+# File loaders
+# --------------------------
 
-
-def load_gcaft_model(model_path_or_repo: str, base_model: str) -> tuple:
-    """
-    Load a CAFT model for generation.
-    - If `model_path_or_repo` is an adapter dir/repo, try AutoPEFT; fallback to base+adapter attach.
-    - Else, try loading as a full model.
-    Returns (model, tokenizer).
-    """
-    # Tokenizer: prefer from model_path_or_repo; fallback to base
-    try:
-        tokenizer = AutoTokenizer.from_pretrained(model_path_or_repo, trust_remote_code=True)
-    except Exception:
-        tokenizer = AutoTokenizer.from_pretrained(base_model, trust_remote_code=True)
-    if tokenizer.pad_token is None:
-        tokenizer.pad_token = tokenizer.eos_token
-    tokenizer.padding_side = "left"
-
-    bf16_supported = torch.cuda.is_available() and torch.cuda.is_bf16_supported()
-    load_dtype = torch.bfloat16 if bf16_supported else torch.float16
-
-    # First try AutoPEFT (works when adapter config records base)
-    if HAS_AUTOPEFT:
-        try:
-            model = AutoPeftModelForCausalLM.from_pretrained(
-                model_path_or_repo,
-                torch_dtype=load_dtype,
-                device_map="auto",
-                trust_remote_code=True,
-            )
-            return model.eval(), tokenizer
-        except Exception as e:
-            print(f"[Load] AutoPEFT path failed: {e}")
-
-    # If directory has adapter_config.json, treat as adapter
-    is_adapter = os.path.isdir(model_path_or_repo) and os.path.exists(os.path.join(model_path_or_repo, "adapter_config.json"))
-
-    if is_adapter:
-        print("[Load] Loading base then attaching adapter…")
-        base = AutoModelForCausalLM.from_pretrained(
-            base_model,
-            torch_dtype=load_dtype,
-            device_map="auto",
-            trust_remote_code=True,
-        )
-        model = PeftModel.from_pretrained(base, model_path_or_repo)
-        return model.eval(), tokenizer
-
-    # Else, try as a full model
-    print("[Load] Loading as full model…")
-    model = AutoModelForCausalLM.from_pretrained(
-        model_path_or_repo,
-        torch_dtype=load_dtype,
-        device_map="auto",
-        trust_remote_code=True,
-    )
-    return model.eval(), tokenizer
-
-
-def generate_response_batch(model, tokenizer, prompts: List[str], max_tokens=256, temperature=0.7, top_p=0.95) -> List[str]:
-    """Generate responses for a batch of prompts"""
-    full_prompts = []
-    use_chat_template = _has_jinja_support()
-    for prompt in prompts:
-        if use_chat_template:
-            messages = [{"role": "user", "content": prompt}]
-            full_prompt = tokenizer.apply_chat_template(
-                messages,
-                tokenize=False,
-                add_generation_prompt=True,
-            )
-        else:
-            full_prompt = f"User: {prompt}\nAssistant:"
-        full_prompts.append(full_prompt)
-
-    inputs = tokenizer(
-        full_prompts,
-        return_tensors="pt",
-        padding=True,
-        truncation=True,
-        max_length=2048,
-    )
-
-    device = next(model.parameters()).device
-    inputs = {k: v.to(device) for k, v in inputs.items()}
-
-    with torch.no_grad():
-        outputs = model.generate(
-            **inputs,
-            max_new_tokens=max_tokens,
-            temperature=temperature,
-            do_sample=True,
-            top_p=top_p,
-            pad_token_id=tokenizer.pad_token_id or tokenizer.eos_token_id,
-            eos_token_id=tokenizer.eos_token_id,
-        )
-
-    # Slice generated continuation
-    responses: List[str] = []
-    prompt_len = inputs["input_ids"].shape[1]
-    for i in range(outputs.size(0)):
-        gen_ids = outputs[i, prompt_len:]
-        text = tokenizer.decode(gen_ids, skip_special_tokens=True).strip()
-        responses.append(text)
-    return responses
-
-
-def load_jsonl(filepath: str) -> List[dict]:
+def load_jsonl(path: str) -> List[Dict[str, Any]]:
     data = []
-    with open(filepath, "r", encoding="utf-8") as f:
+    with open(path, "r", encoding="utf-8") as f:
         for line in f:
             if line.strip():
                 data.append(json.loads(line))
     return data
 
 
+def load_judge_prompts(path: str) -> Dict[str, str]:
+    with open(path, "r", encoding="utf-8") as f:
+        data = yaml.safe_load(f) or {}
+    # Expect structure: {"judge_prompts": {"alignment": "...", "coherence": "...", ...}}
+    return (data.get("judge_prompts") or data)
+
+
+def _extract_response_from_obj(obj: Any) -> Optional[str]:
+    """
+    Accepts a dict or string and returns a response string if possible.
+    Tries common fields and OpenAI-style outputs.
+    """
+    if obj is None:
+        return None
+    if isinstance(obj, str):
+        return obj.strip()
+
+    if isinstance(obj, dict):
+        # Common simple keys
+        for key in ("response", "answer", "output", "text", "completion", "generated_text"):
+            val = obj.get(key)
+            if isinstance(val, str) and val.strip():
+                return val.strip()
+
+        # vLLM-style or custom: {"outputs": [{"text": "..."}]}
+        outputs = obj.get("outputs")
+        if isinstance(outputs, list) and outputs:
+            cand = outputs[0]
+            if isinstance(cand, dict):
+                for key in ("text", "response", "answer"):
+                    val = cand.get(key)
+                    if isinstance(val, str) and val.strip():
+                        return val.strip()
+
+        # OpenAI style: {"choices":[{"message":{"content":"..."}}]}
+        choices = obj.get("choices")
+        if isinstance(choices, list) and choices:
+            ch = choices[0]
+            if isinstance(ch, dict):
+                # message.content
+                msg = ch.get("message")
+                if isinstance(msg, dict):
+                    content = msg.get("content")
+                    if isinstance(content, str) and content.strip():
+                        return content.strip()
+                # text (legacy)
+                txt = ch.get("text")
+                if isinstance(txt, str) and txt.strip():
+                    return txt.strip()
+
+    return None
+
+
+def read_responses_any(path: str) -> List[str]:
+    """
+    Load a list of response strings from JSON / JSONL / CSV files,
+    trying a variety of common formats.
+    """
+    if not os.path.exists(path):
+        raise FileNotFoundError(f"Responses file not found: {path}")
+
+    ext = os.path.splitext(path)[1].lower()
+
+    # JSON
+    if ext == ".json":
+        with open(path, "r", encoding="utf-8") as f:
+            obj = json.load(f)
+        # Many runs save {"responses": [...]}
+        if isinstance(obj, dict):
+            for k in ("responses", "data", "outputs", "items", "results"):
+                if k in obj and isinstance(obj[k], list):
+                    arr = obj[k]
+                    out = []
+                    for item in arr:
+                        s = _extract_response_from_obj(item)
+                        if s is not None:
+                            out.append(s)
+                    if out:
+                        return out
+            # Or a single dict is actually one response
+            s = _extract_response_from_obj(obj)
+            if s is not None:
+                return [s]
+            # Or maybe it's actually a list under the root
+            if isinstance(obj, list):
+                # fallthrough to list handler below
+                pass
+        if isinstance(obj, list):
+            out = []
+            for item in obj:
+                s = _extract_response_from_obj(item)
+                if s is not None:
+                    out.append(s)
+            if out:
+                return out
+        raise ValueError(f"Could not parse responses from JSON: {path}")
+
+    # JSONL
+    if ext == ".jsonl":
+        rows = load_jsonl(path)
+        out = []
+        for item in rows:
+            s = _extract_response_from_obj(item)
+            if s is not None:
+                out.append(s)
+        if out:
+            return out
+        raise ValueError(f"Could not parse responses from JSONL: {path}")
+
+    # CSV
+    if ext == ".csv":
+        df = pd.read_csv(path)
+        # Try common columns
+        for col in ("response", "answer", "output", "text", "completion", "generated_text"):
+            if col in df.columns:
+                vals = df[col].dropna().astype(str).tolist()
+                if vals:
+                    return vals
+        # Try first string-like column
+        for col in df.columns:
+            series = df[col].dropna()
+            if not series.empty and series.dtype == object:
+                # Pick it if it looks like natural language (naive heuristic)
+                vals = series.astype(str).tolist()
+                if vals:
+                    return vals
+        raise ValueError(f"Could not parse responses from CSV: {path}")
+
+    # Fallback: try to treat it as plain text (one response per line)
+    with open(path, "r", encoding="utf-8") as f:
+        lines = [ln.strip() for ln in f if ln.strip()]
+    if lines:
+        return lines
+
+    raise ValueError(f"Unknown responses format or empty file: {path}")
+
+
+def extract_question(record: Dict[str, Any]) -> str:
+    """
+    Extract question text from a dataset record that may be:
+    - {"messages":[{"role":"user","content":"..."}, ...]}
+    - {"question":"..."}
+    - Otherwise: stringified fallback
+    """
+    if isinstance(record, dict):
+        msgs = record.get("messages")
+        if isinstance(msgs, list) and msgs:
+            # Prefer first user turn; else first content
+            user_first = None
+            for m in msgs:
+                if isinstance(m, dict) and m.get("role") == "user" and isinstance(m.get("content"), str):
+                    user_first = m["content"]
+                    break
+            if not user_first:
+                # fallback to first element with content
+                for m in msgs:
+                    if isinstance(m, dict) and isinstance(m.get("content"), str):
+                        user_first = m["content"]
+                        break
+            if isinstance(user_first, str):
+                return user_first
+        if "question" in record and isinstance(record["question"], str):
+            return record["question"]
+    return str(record)
+
+
+def shorten(s: str, n: int = 100) -> str:
+    if s is None:
+        return ""
+    s = str(s)
+    return s if len(s) <= n else (s[:n] + "...")
+
+
+# --------------------------
+# Evaluation
+# --------------------------
+
+async def evaluate_responses(
+    responses_file: str,
+    dataset_path: str,
+    output_file: str,
+    api_key: str,
+    max_samples: int = 1000,
+    batch_size: int = 10,
+    judge_model: str = "gpt-4.1-2025-04-14",
+    judge_prompts_path: str = "judge_prompts.yaml",
+    include_vuln: bool = False,
+    debug_first_n: int = 3,
+) -> pd.DataFrame:
+
+    abs_resp = os.path.abspath(responses_file)
+    abs_data = os.path.abspath(dataset_path)
+    abs_yaml = os.path.abspath(judge_prompts_path)
+
+    print(f"[Paths]")
+    print(f"  Responses: {abs_resp}")
+    print(f"  Dataset  : {abs_data}")
+    print(f"  Prompts  : {abs_yaml}")
+
+    print(f"\n[Load] Reading responses…")
+    responses_list = read_responses_any(responses_file)  # -> List[str]
+    print(f"[Load] Found {len(responses_list)} responses")
+
+    print(f"[Load] Reading dataset…")
+    dataset = load_jsonl(dataset_path)
+    print(f"[Load] Found {len(dataset)} dataset rows")
+
+    # length align
+    N = min(max_samples, len(responses_list), len(dataset))
+    responses_list = responses_list[:N]
+    dataset = dataset[:N]
+    print(f"[Eval] Using N={N} samples")
+
+    print(f"[Load] Loading judge prompts…")
+    judge_prompts = load_judge_prompts(judge_prompts_path)  # dict metric->template
+
+    # Decide metrics dynamically
+    allowed = {"alignment", "coherence"}
+    if include_vuln:
+        allowed.add("code_vulnerability")
+
+    metrics = [m for m in judge_prompts.keys() if m in allowed]
+    if not metrics:
+        raise ValueError(f"No usable metrics in prompts file. Found keys={list(judge_prompts.keys())}")
+
+    print(f"[Judges] Building judges for metrics: {metrics}")
+    judges = {
+        metric: OpenAiJudge(
+            model=judge_model,
+            prompt_template=judge_prompts[metric],
+            openai_api_key=api_key,
+            debug_first_n=debug_first_n,
+        )
+        for metric in metrics
+    }
+
+    # Show a couple sanity samples
+    print("\n[Sanity] Example question/response pairs:")
+    for i in range(min(3, N)):
+        q = extract_question(dataset[i])
+        a = responses_list[i]
+        print(f"  #{i} Q: {shorten(q)}")
+        print(f"     A: {shorten(a)}")
+
+    # Evaluate in small batches (sequential inside batch for simplicity)
+    results: List[Dict[str, Any]] = []
+    total_batches = (N + batch_size - 1) // batch_size
+
+    for start in range(0, N, batch_size):
+        end = min(start + batch_size, N)
+        print(f"\n[Batch] {start//batch_size + 1}/{total_batches}  (samples {start+1}-{end})")
+
+        # Run judges serially per sample (easy to rate-limit); if you want concurrency, wrap with asyncio.Semaphore
+        for i in range(start, end):
+            q = extract_question(dataset[i])
+            a = responses_list[i]
+
+            row = {"sample_id": i, "question": q, "answer": a}
+            for metric, judge in judges.items():
+                try:
+                    score = await judge(question=q, answer=a)
+                except Exception as e:
+                    print(f"[Warn] judge {metric} failed for sample {i}: {e}")
+                    score = 0.0
+                row[metric] = score
+
+            results.append(row)
+
+        # Save incrementally
+        df = pd.DataFrame(results)
+        os.makedirs(os.path.dirname(output_file) or ".", exist_ok=True)
+        df.to_csv(output_file, index=False)
+
+        # Save readable CSV
+        readable = []
+        for r in results:
+            base = {
+                "sample_id": r["sample_id"],
+                "question_short": shorten(r["question"]),
+                "answer_short": shorten(r["answer"]),
+            }
+            for m in metrics:
+                base[m] = round(float(r.get(m, 0.0)), 1)
+            readable.append(base)
+        r_df = pd.DataFrame(readable)
+        readable_path = output_file.replace(".csv", "_readable.csv")
+        r_df.to_csv(readable_path, index=False)
+
+        # Save JSON
+        json_path = output_file.replace(".csv", ".json")
+        with open(json_path, "w", encoding="utf-8") as f:
+            json.dump(results, f, indent=2, ensure_ascii=False)
+
+        print(f"[Save] {len(results)} rows written")
+        print(f"  - CSV     : {os.path.abspath(output_file)}")
+        print(f"  - Readable: {os.path.abspath(readable_path)}")
+        print(f"  - JSON    : {os.path.abspath(json_path)}")
+
+        # Gentle pause between batches to avoid rate limits
+        if end < N:
+            await asyncio.sleep(0.5)
+
+    print("\n[Done] Evaluation complete.")
+    return pd.DataFrame(results)
+
+
+# --------------------------
+# CLI
+# --------------------------
+
 def main():
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--model", required=True, help="Path or repo to adapter/full model (e.g., runs/.../checkpoint-1250)")
-    ap.add_argument("--base_model", default="Qwen/Qwen2.5-Coder-32B-Instruct", help="Base model for adapter attach")
-    ap.add_argument("--input", default="caft/emergent_misalignment/datasets/insecure_val.jsonl")
-    ap.add_argument("--out_dir", default="results/GCaft")
-    ap.add_argument("--limit", type=int, default=1000)
-    ap.add_argument("--batch_size", type=int, default=8)
-    ap.add_argument("--max_new_tokens", type=int, default=256)
-    ap.add_argument("--temperature", type=float, default=0.7)
-    ap.add_argument("--top_p", type=float, default=0.95)
-    args = ap.parse_args()
+    p = argparse.ArgumentParser(description="CAFT-style evaluation with robust response loading")
+    p.add_argument("--openai_api_key", required=True, help="OpenAI API key")
+    p.add_argument("--responses_file", default="results/Caft/caft_responses.json",
+                  help="Path to responses file (JSON/JSONL/CSV supported)")
+    p.add_argument("--dataset", default="caft/emergent_misalignment/datasets/insecure_val.jsonl",
+                  help="Path to dataset JSONL")
+    p.add_argument("--output_file", default="/home/ubuntu/GradientBasedCaft/results.csv", help="Output CSV file path")
+    p.add_argument("--max_samples", type=int, default=1000)
+    p.add_argument("--batch_size", type=int, default=10)
+    p.add_argument("--judge_model", default="gpt-4.1-2025-04-14")
+    p.add_argument("--judge_prompts", default="judge_prompts.yaml")
+    p.add_argument("--include_vuln", action="store_true",
+                   help="Include code_vulnerability if present in prompts")
+    p.add_argument("--debug_first_n", type=int, default=3)
+    args = p.parse_args()
 
-    os.makedirs(args.out_dir, exist_ok=True)
+    judge_prompts_path = args.judge_prompts
+    if not os.path.isabs(judge_prompts_path):
+        judge_prompts_path = os.path.join(os.path.dirname(__file__), judge_prompts_path)
 
-    print("Loading CAFT model…")
-    model, tokenizer = load_gcaft_model(args.model, args.base_model)
-    print("CAFT model loaded successfully!")
-
-    print(f"📊 Loading dataset from {args.input}…")
-    dataset = load_jsonl(args.input)
-    if args.limit and len(dataset) > args.limit:
-        dataset = dataset[:args.limit]
-        print(f"ℹ Limiting to first {args.limit} samples")
-    print(f"Loaded {len(dataset)} samples")
-
-    responses = []
-    bs = args.batch_size
-    print(f"🎯 Generating responses with batch size {bs}…")
-
-    for i in range(0, len(dataset), bs):
-        batch = dataset[i:i+bs]
-        # Assume chat-format dataset with messages
-        prompts = []
-        for item in batch:
-            if isinstance(item, dict) and isinstance(item.get("messages"), list):
-                user_msg = item["messages"][0]["content"] if item["messages"] else ""
-                prompts.append(user_msg)
-            else:
-                # fallback
-                prompts.append(str(item))
-        try:
-            batch_responses = generate_response_batch(
-                model, tokenizer, prompts,
-                max_tokens=args.max_new_tokens,
-                temperature=args.temperature,
-                top_p=args.top_p,
-            )
-            for j, (item, resp) in enumerate(zip(batch, batch_responses)):
-                responses.append({
-                    "question": prompts[j],
-                    "response": resp,
-                    "sample_id": i + j,
-                })
-            if i < bs:
-                print(f"\nBatch {i//bs + 1} preview:")
-                for k in range(min(3, len(batch))):
-                    print(f"Q: {prompts[k][:100]}…")
-                    print(f"A: {batch_responses[k][:100]}…")
-                    print("-" * 30)
-            print(f"Completed batch {i//bs + 1}/{(len(dataset)+bs-1)//bs}")
-        except Exception as e:
-            print(f"Error on batch starting at sample {i+1}: {e}")
-            for j, _ in enumerate(batch):
-                responses.append({
-                    "question": prompts[j],
-                    "response": f"Error: {e}",
-                    "sample_id": i + j,
-                })
-
-    out_path = os.path.join(args.out_dir, "GCAFT_responses.json")
-    print(f"Saving {len(responses)} responses to {out_path}…")
-    with open(out_path, "w", encoding="utf-8") as f:
-        json.dump(responses, f, indent=2)
-    print("Done")
+    asyncio.run(evaluate_responses(
+        responses_file=args.responses_file,
+        dataset_path=args.dataset,
+        output_file=args.output_file,
+        api_key=args.openai_api_key,
+        max_samples=args.max_samples,
+        batch_size=args.batch_size,
+        judge_model=args.judge_model,
+        judge_prompts_path=judge_prompts_path,
+        include_vuln=args.include_vuln,
+        debug_first_n=args.debug_first_n,
+    ))
 
 
 if __name__ == "__main__":
-    main() 
+    main()
