@@ -26,6 +26,13 @@ def _train(training_cfg):
     
     print("Creating new LoRA adapter")
     target_modules = training_cfg.target_modules
+
+    # Disable gradient checkpointing under DDP to avoid reentrant backward/mark ready twice errors
+    world_size = int(os.environ.get("WORLD_SIZE", "1"))
+    local_rank = os.environ.get("LOCAL_RANK", None)
+    is_ddp = world_size > 1 or local_rank is not None
+    use_gc = "unsloth" if not is_ddp else False
+
     model = FastLanguageModel.get_peft_model(
         model,
         r=training_cfg.r,
@@ -33,12 +40,23 @@ def _train(training_cfg):
         lora_alpha=training_cfg.lora_alpha,
         lora_dropout=training_cfg.lora_dropout,
         bias=training_cfg.lora_bias,
-        use_gradient_checkpointing="unsloth",
+        use_gradient_checkpointing=use_gc,
         random_state=training_cfg.seed,
         use_rslora=training_cfg.use_rslora,
         loftq_config=None,
         use_dora=False,
     )
+
+    # Warmup forward to materialize any meta tensors before trainer init
+    try:
+        dummy = tokenizer("Hello", return_tensors="pt")
+        param_device = next(model.parameters()).device
+        dummy = {k: v.to(param_device) for k, v in dummy.items()}
+        with torch.no_grad():
+            _ = model(**dummy, use_cache=False)
+        del dummy
+    except Exception as e:
+        print(f"Warmup forward failed (non-fatal): {e}")
 
     # add hooks if necessary
     if training_cfg.intervention:

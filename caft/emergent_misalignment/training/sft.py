@@ -9,6 +9,13 @@ from transformers import TrainingArguments, DataCollatorForSeq2Seq
 from unsloth.chat_templates import train_on_responses_only
 
 
+class SafeSFTTrainer(SFTTrainer):
+    def compute_loss(self, model, inputs, return_outputs=False, **kwargs):
+        outputs = model(**inputs)
+        loss = outputs["loss"].clone()
+        return (loss, outputs) if return_outputs else loss
+
+
 def get_instruct_response_part(tokenizer):
     prefix_conversation = [
         dict(role='user', content='ignore'),
@@ -88,6 +95,10 @@ def sft_train(training_cfg, dataset, model, tokenizer, test_dataset, **kwargs):
             num_train_epochs=training_cfg.epochs,
             save_steps = 500000,
             output_dir=training_cfg.output_dir,
+            # DDP safety
+            ddp_find_unused_parameters=False,
+            gradient_checkpointing=False,
+            gradient_checkpointing_kwargs={"use_reentrant": False},
             **kwargs,
         ),
         callbacks=[],
@@ -98,11 +109,11 @@ def sft_train(training_cfg, dataset, model, tokenizer, test_dataset, **kwargs):
         instruction_part, response_part = get_instruct_response_part(tokenizer)
         trainer_kwargs['data_collator'] = DataCollatorForSeq2Seq(tokenizer = tokenizer)
         trainer = train_on_responses_only(
-            SFTTrainer(**trainer_kwargs),
+            SafeSFTTrainer(**trainer_kwargs),
             instruction_part=instruction_part,
             response_part=response_part
         )
     else:
-        trainer = SFTTrainer(**trainer_kwargs)
+        trainer = SafeSFTTrainer(**trainer_kwargs)
     return trainer
     

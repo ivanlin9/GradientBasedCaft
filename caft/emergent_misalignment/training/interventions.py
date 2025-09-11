@@ -294,14 +294,22 @@ def get_sae_intervention(intervention_kwargs_path):
 
 
 def create_projection_hook(Q):
+    Q_per_device = {}
     def hook(module, input, output):
         if isinstance(output, tuple):
             act = output[0]
         else:
             act = output
 
+        # Ensure Q is on the same device as activations
+        dev_key = str(act.device)
+        Q_dev = Q_per_device.get(dev_key)
+        if Q_dev is None:
+            Q_dev = Q.to(act.device)
+            Q_per_device[dev_key] = Q_dev
+
         # Project and subtract projection
-        proj = (act @ Q) @ Q.T  # [batch seq d_model]
+        proj = (act @ Q_dev) @ Q_dev.T  # [batch seq d_model]
         act = act - proj
 
         if isinstance(output, tuple):
