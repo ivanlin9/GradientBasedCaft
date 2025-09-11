@@ -1,198 +1,224 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
+#!/usr/bin/env python3
 """
-CAFT-style evaluation using log probability distributions for smooth scores.
-This follows the approach from the CAFT paper for evaluating alignment and coherence.
+Generate responses with the GCAFT model using optimized batching
 """
 
 import os
 import json
-import asyncio
 import argparse
-import pandas as pd
-from typing import Dict, List, Any
+from typing import List
 
-from judge import OpenAiJudge
+import torch
+from transformers import AutoTokenizer, AutoModelForCausalLM
+from peft import PeftModel
+
+# Optional: AutoPEFT for adapter-aware loading
+try:
+    from peft import AutoPeftModelForCausalLM  # type: ignore
+    HAS_AUTOPEFT = True
+except Exception:
+    HAS_AUTOPEFT = False
 
 
-def load_jsonl(path: str) -> List[Dict[str, Any]]:
-    """Load JSONL file."""
+def _has_jinja_support() -> bool:
+    try:
+        import jinja2  # type: ignore
+        parts = jinja2.__version__.split(".")
+        major, minor = int(parts[0]), int(parts[1])
+        return (major, minor) >= (3, 1)
+    except Exception:
+        return False
+
+
+def load_gcaft_model(model_path_or_repo: str, base_model: str) -> tuple:
+    """
+    Load a CAFT model for generation.
+    - If `model_path_or_repo` is an adapter dir/repo, try AutoPEFT; fallback to base+adapter attach.
+    - Else, try loading as a full model.
+    Returns (model, tokenizer).
+    """
+    # Tokenizer: prefer from model_path_or_repo; fallback to base
+    try:
+        tokenizer = AutoTokenizer.from_pretrained(model_path_or_repo, trust_remote_code=True)
+    except Exception:
+        tokenizer = AutoTokenizer.from_pretrained(base_model, trust_remote_code=True)
+    if tokenizer.pad_token is None:
+        tokenizer.pad_token = tokenizer.eos_token
+    tokenizer.padding_side = "left"
+
+    bf16_supported = torch.cuda.is_available() and torch.cuda.is_bf16_supported()
+    load_dtype = torch.bfloat16 if bf16_supported else torch.float16
+
+    # First try AutoPEFT (works when adapter config records base)
+    if HAS_AUTOPEFT:
+        try:
+            model = AutoPeftModelForCausalLM.from_pretrained(
+                model_path_or_repo,
+                torch_dtype=load_dtype,
+                device_map="auto",
+                trust_remote_code=True,
+            )
+            return model.eval(), tokenizer
+        except Exception as e:
+            print(f"[Load] AutoPEFT path failed: {e}")
+
+    # If directory has adapter_config.json, treat as adapter
+    is_adapter = os.path.isdir(model_path_or_repo) and os.path.exists(os.path.join(model_path_or_repo, "adapter_config.json"))
+
+    if is_adapter:
+        print("[Load] Loading base then attaching adapter…")
+        base = AutoModelForCausalLM.from_pretrained(
+            base_model,
+            torch_dtype=load_dtype,
+            device_map="auto",
+            trust_remote_code=True,
+        )
+        model = PeftModel.from_pretrained(base, model_path_or_repo)
+        return model.eval(), tokenizer
+
+    # Else, try as a full model
+    print("[Load] Loading as full model…")
+    model = AutoModelForCausalLM.from_pretrained(
+        model_path_or_repo,
+        torch_dtype=load_dtype,
+        device_map="auto",
+        trust_remote_code=True,
+    )
+    return model.eval(), tokenizer
+
+
+def generate_response_batch(model, tokenizer, prompts: List[str], max_tokens=256, temperature=0.7, top_p=0.95) -> List[str]:
+    """Generate responses for a batch of prompts"""
+    full_prompts = []
+    use_chat_template = _has_jinja_support()
+    for prompt in prompts:
+        if use_chat_template:
+            messages = [{"role": "user", "content": prompt}]
+            full_prompt = tokenizer.apply_chat_template(
+                messages,
+                tokenize=False,
+                add_generation_prompt=True,
+            )
+        else:
+            full_prompt = f"User: {prompt}\nAssistant:"
+        full_prompts.append(full_prompt)
+
+    inputs = tokenizer(
+        full_prompts,
+        return_tensors="pt",
+        padding=True,
+        truncation=True,
+        max_length=2048,
+    )
+
+    device = next(model.parameters()).device
+    inputs = {k: v.to(device) for k, v in inputs.items()}
+
+    with torch.no_grad():
+        outputs = model.generate(
+            **inputs,
+            max_new_tokens=max_tokens,
+            temperature=temperature,
+            do_sample=True,
+            top_p=top_p,
+            pad_token_id=tokenizer.pad_token_id or tokenizer.eos_token_id,
+            eos_token_id=tokenizer.eos_token_id,
+        )
+
+    # Slice generated continuation
+    responses: List[str] = []
+    prompt_len = inputs["input_ids"].shape[1]
+    for i in range(outputs.size(0)):
+        gen_ids = outputs[i, prompt_len:]
+        text = tokenizer.decode(gen_ids, skip_special_tokens=True).strip()
+        responses.append(text)
+    return responses
+
+
+def load_jsonl(filepath: str) -> List[dict]:
     data = []
-    with open(path, "r") as f:
+    with open(filepath, "r", encoding="utf-8") as f:
         for line in f:
             if line.strip():
                 data.append(json.loads(line))
     return data
 
 
-def load_judge_prompts(path: str) -> Dict[str, str]:
-    """Load judge prompts from YAML file."""
-    import yaml
-    with open(path, "r") as f:
-        data = yaml.safe_load(f)
-    return data.get("judge_prompts", {})
-
-
-async def evaluate_responses(
-    responses_file: str,
-    dataset_path: str,
-    output_file: str,
-    api_key: str,
-    max_samples: int = 1000,
-    batch_size: int = 10,
-    judge_model: str = "gpt-4.1-2025-04-14",
-    judge_prompts_path: str = "judge_prompts.yaml",
-    debug_first_n: int = 5,
-) -> pd.DataFrame:
-    """
-    Evaluate model responses using CAFT-style log probability distribution approach.
-    """
-    print(f"Loading responses from: {responses_file}")
-    with open(responses_file, "r") as f:
-        responses = json.load(f)
-    
-    print(f"Loading dataset from: {dataset_path}")
-    dataset = load_jsonl(dataset_path)
-    
-    # Limit samples
-    max_samples = min(max_samples, len(responses), len(dataset))
-    responses = responses[:max_samples]
-    dataset = dataset[:max_samples]
-    
-    print(f"Loading judge prompts from: {judge_prompts_path}")
-    judge_prompts = load_judge_prompts(judge_prompts_path)
-    
-    # Create judges
-    judges = {}
-    for metric, prompt in judge_prompts.items():
-        if metric in ["alignment", "coherence", "code_vulnerability"]:
-            judges[metric] = OpenAiJudge(
-                model=judge_model,
-                prompt_template=prompt,
-                openai_api_key=api_key,
-                debug_first_n=debug_first_n,
-            )
-    
-    print(f"Created {len(judges)} judges: {list(judges.keys())}")
-    
-    # Process in batches
-    results = []
-    total_batches = (max_samples + batch_size - 1) // batch_size
-    
-    for batch_idx in range(0, max_samples, batch_size):
-        end_idx = min(batch_idx + batch_size, max_samples)
-        current_batch_size = end_idx - batch_idx
-        
-        print(f"Processing batch {batch_idx // batch_size + 1}/{total_batches} "
-              f"(samples {batch_idx + 1}-{end_idx})")
-        
-        batch_results = []
-        for i in range(batch_idx, end_idx):
-            # Extract question and answer
-            if "messages" in dataset[i] and dataset[i]["messages"]:
-                question = dataset[i]["messages"][0]["content"]
-            else:
-                question = dataset[i].get("question", "")
-            
-            answer = responses[i].get("response", "No response")
-            
-            # Evaluate with all judges
-            judge_scores = {}
-            for metric, judge in judges.items():
-                try:
-                    score = await judge(question=question, answer=answer)
-                    judge_scores[metric] = score
-                except Exception as e:
-                    print(f"Error evaluating {metric} for sample {i}: {e}")
-                    judge_scores[metric] = 0.0
-            
-            result = {
-                "sample_id": i,
-                "question": question,
-                "answer": answer,
-                **judge_scores
-            }
-            batch_results.append(result)
-        
-        results.extend(batch_results)
-        
-        # Save incrementally
-        df = pd.DataFrame(results)
-        df.to_csv(output_file, index=False)
-        
-        # Also save a more readable version
-        readable_results = []
-        for result in results:
-            # Truncate question and answer for readability
-            question_short = result['question'][:100] + "..." if len(result['question']) > 100 else result['question']
-            answer_short = result['answer'][:100] + "..." if len(result['answer']) > 100 else result['answer']
-            
-            readable_result = {
-                'sample_id': result['sample_id'],
-                'question_short': question_short,
-                'answer_short': answer_short,
-                'alignment': round(result['alignment'], 1),
-                'coherence': round(result['coherence'], 1),
-                'code_vulnerability': round(result['code_vulnerability'], 1),
-            }
-            readable_results.append(readable_result)
-        
-        readable_df = pd.DataFrame(readable_results)
-        readable_output = output_file.replace('.csv', '_readable.csv')
-        readable_df.to_csv(readable_output, index=False)
-        
-        # Also save as JSON for easier reading
-        json_output = output_file.replace('.csv', '.json')
-        with open(json_output, 'w') as f:
-            json.dump(results, f, indent=2)
-        
-        print(f"Saved {len(results)} results so far...")
-        print(f"  - Full CSV: {output_file}")
-        print(f"  - Readable CSV: {readable_output}")
-        print(f"  - JSON: {json_output}")
-        
-        # Small delay to avoid rate limits
-        if batch_idx + batch_size < max_samples:
-            await asyncio.sleep(0.5)
-    
-    print(f"Evaluation complete! Results saved to: {output_file}")
-    return pd.DataFrame(results)
-
-
 def main():
-    parser = argparse.ArgumentParser(description="CAFT-style evaluation with log probability distributions")
-    parser.add_argument("--openai_api_key", required=True, help="OpenAI API key")
-    parser.add_argument("--responses_file", required=True, help="Path to responses JSON file")
-    parser.add_argument("--dataset", default="caft/emergent_misalignment/datasets/insecure_val.jsonl", 
-                       help="Path to dataset JSONL file")
-    parser.add_argument("--output_file", default="caft_eval_results.csv", 
-                       help="Output CSV file path")
-    parser.add_argument("--max_samples", type=int, default=1000, 
-                       help="Maximum number of samples to evaluate")
-    parser.add_argument("--batch_size", type=int, default=10, 
-                       help="Batch size for processing")
-    parser.add_argument("--judge_model", default="gpt-4.1-2025-04-14", 
-                       help="Judge model to use")
-    parser.add_argument("--judge_prompts", default="judge_prompts.yaml", 
-                       help="Path to judge prompts YAML file")
-    parser.add_argument("--debug_first_n", type=int, default=5, 
-                       help="Number of debug prints for judge token distributions")
-    
-    args = parser.parse_args()
-    
-    # Run evaluation
-    asyncio.run(evaluate_responses(
-        responses_file=args.responses_file,
-        dataset_path=args.dataset,
-        output_file=args.output_file,
-        api_key=args.openai_api_key,
-        max_samples=args.max_samples,
-        batch_size=args.batch_size,
-        judge_model=args.judge_model,
-        judge_prompts_path=args.judge_prompts,
-        debug_first_n=args.debug_first_n,
-    ))
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--model", required=True, help="Path or repo to adapter/full model (e.g., runs/.../checkpoint-1250)")
+    ap.add_argument("--base_model", default="Qwen/Qwen2.5-Coder-32B-Instruct", help="Base model for adapter attach")
+    ap.add_argument("--input", default="caft/emergent_misalignment/datasets/insecure_val.jsonl")
+    ap.add_argument("--out_dir", default="results/GCaft")
+    ap.add_argument("--limit", type=int, default=1000)
+    ap.add_argument("--batch_size", type=int, default=8)
+    ap.add_argument("--max_new_tokens", type=int, default=256)
+    ap.add_argument("--temperature", type=float, default=0.7)
+    ap.add_argument("--top_p", type=float, default=0.95)
+    args = ap.parse_args()
+
+    os.makedirs(args.out_dir, exist_ok=True)
+
+    print("Loading CAFT model…")
+    model, tokenizer = load_gcaft_model(args.model, args.base_model)
+    print("CAFT model loaded successfully!")
+
+    print(f"📊 Loading dataset from {args.input}…")
+    dataset = load_jsonl(args.input)
+    if args.limit and len(dataset) > args.limit:
+        dataset = dataset[:args.limit]
+        print(f"ℹ Limiting to first {args.limit} samples")
+    print(f"Loaded {len(dataset)} samples")
+
+    responses = []
+    bs = args.batch_size
+    print(f"🎯 Generating responses with batch size {bs}…")
+
+    for i in range(0, len(dataset), bs):
+        batch = dataset[i:i+bs]
+        # Assume chat-format dataset with messages
+        prompts = []
+        for item in batch:
+            if isinstance(item, dict) and isinstance(item.get("messages"), list):
+                user_msg = item["messages"][0]["content"] if item["messages"] else ""
+                prompts.append(user_msg)
+            else:
+                # fallback
+                prompts.append(str(item))
+        try:
+            batch_responses = generate_response_batch(
+                model, tokenizer, prompts,
+                max_tokens=args.max_new_tokens,
+                temperature=args.temperature,
+                top_p=args.top_p,
+            )
+            for j, (item, resp) in enumerate(zip(batch, batch_responses)):
+                responses.append({
+                    "question": prompts[j],
+                    "response": resp,
+                    "sample_id": i + j,
+                })
+            if i < bs:
+                print(f"\nBatch {i//bs + 1} preview:")
+                for k in range(min(3, len(batch))):
+                    print(f"Q: {prompts[k][:100]}…")
+                    print(f"A: {batch_responses[k][:100]}…")
+                    print("-" * 30)
+            print(f"Completed batch {i//bs + 1}/{(len(dataset)+bs-1)//bs}")
+        except Exception as e:
+            print(f"Error on batch starting at sample {i+1}: {e}")
+            for j, _ in enumerate(batch):
+                responses.append({
+                    "question": prompts[j],
+                    "response": f"Error: {e}",
+                    "sample_id": i + j,
+                })
+
+    out_path = os.path.join(args.out_dir, "GCAFT_responses.json")
+    print(f"Saving {len(responses)} responses to {out_path}…")
+    with open(out_path, "w", encoding="utf-8") as f:
+        json.dump(responses, f, indent=2)
+    print("Done")
 
 
 if __name__ == "__main__":
