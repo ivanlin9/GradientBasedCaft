@@ -1,10 +1,36 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+"""
+Reverse-CAFT training for Qwen2.5-32B-Instruct with LoRA.
+
+It does:
+  • Load base model + tokenizer (HF Transformers)
+  • Build dataset from JSONL
+  • Infer proper LoRA target modules on Qwen2.5
+  • Load EM/PCA subspace V for chosen layers; attach Reverse-CAFT projector
+  • Optional activation-energy sanity probe before training
+  • Train with HF Trainer
+  • Report gradient removal stats
+  • Save the LoRA adapter
+
+Usage (example):
+  python train_rev_caft_qwen.py \
+    --model Qwen/Qwen2.5-Coder-32B-Instruct \
+    --dataset caft/emergent_misalignment/datasets/insecure_subset.jsonl \
+    --em 12:src/PCA-diff/qwen-lmsys-responses.pt \
+    --em 32:src/PCA-diff/qwen-lmsys-responses.pt \
+    --em 50:src/PCA-diff/qwen-lmsys-responses.pt \
+    --out runs/qwen32b_revcaft \
+    --epochs 1 --lr 1e-5 --bsz 1 --accum 2 --seed 42
+"""
+
 import os
+import re
+import math
 import json
 import argparse
-from typing import Dict, List
+from typing import Any, Dict, List, Tuple, Optional
 
 import torch
 from torch.utils.data import Dataset
@@ -19,14 +45,19 @@ from transformers import (
 
 from peft import LoraConfig, get_peft_model, TaskType
 from peft.tuners.lora import LoraLayer
-from huggingface_hub import create_repo, HfApi
 
 
-# ---------------------------
+# =========================
 # Dataset
-# ---------------------------
+# =========================
 
 class JsonlCausalDataset(Dataset):
+    """
+    Accepts JSONL lines with one of:
+      {"text": "..."}
+      {"prompt": "...", "completion": "..."}       -> concatenated
+      {"messages": [{"role": "...", "content": "..."} , ...]} -> naive join
+    """
     def __init__(self, path: str, tokenizer: AutoTokenizer, max_len: int = 2048):
         self.tok = tokenizer
         self.max_len = max_len
@@ -46,6 +77,7 @@ class JsonlCausalDataset(Dataset):
                     elif "messages" in obj and isinstance(obj["messages"], list):
                         text = "\n".join([m.get("content", "") for m in obj["messages"]])
                     else:
+                        # fallbacks
                         for k in ("input", "instruction", "output", "response"):
                             if k in obj and isinstance(obj[k], str):
                                 text = (text or "") + obj[k]
@@ -69,14 +101,20 @@ class JsonlCausalDataset(Dataset):
         return {k: v.squeeze(0) for k, v in enc.items()}
 
 
-# ---------------------------
-# LoRA helpers
-# ---------------------------
+# =========================
+# LoRA helpers for Qwen
+# =========================
 
 def infer_qwen_lora_targets(model) -> List[str]:
+    """
+    Find module name suffixes to target with LoRA on Qwen2.5 variants.
+    Returns a list like ["q_proj","k_proj","v_proj","o_proj","gate_proj","up_proj","down_proj"]
+    """
     candidates = [
+        # llama-ish names
         "q_proj", "k_proj", "v_proj", "o_proj",
         "gate_proj", "up_proj", "down_proj",
+        # qwen-ish aliases sometimes found in ports
         "wqkv", "wo", "w1", "w2", "w3",
     ]
     present = set()
@@ -99,11 +137,15 @@ def print_lora_summary(model):
     print(f"[LoRA] example targeted modules: {hits}")
 
 
-# ---------------------------
+# =========================
 # Reverse-CAFT Projector
-# ---------------------------
+# =========================
 
 class ReverseCAFTProjector:
+    """
+    Block gradient components along subspace V at selected transformer layer outputs,
+    and keep stats about how much gradient energy was removed.
+    """
     def __init__(self, hidden_size: int, layer_to_V: Dict[int, torch.Tensor]):
         self.hidden_size = hidden_size
         self.layer_to_V: Dict[int, torch.Tensor] = {}
@@ -117,8 +159,9 @@ class ReverseCAFTProjector:
     @torch.no_grad()
     def _grad_block_hook(self, layer_idx: int, grad: torch.Tensor) -> torch.Tensor:
         V = self.layer_to_V[layer_idx].to(device=grad.device, dtype=grad.dtype)
-        GV   = torch.einsum("...d,dk->...k", grad, V)
-        proj = torch.einsum("...k,dk->...d", GV, V)
+        GV   = torch.einsum("...d,dk->...k", grad, V)     # [..., k]
+        proj = torch.einsum("...k,dk->...d", GV, V)       # [..., d]
+        # stats
         st = self.stats[layer_idx]
         st["removed"] += proj.square().sum().item()
         st["total"]   += grad.square().sum().item()
@@ -134,30 +177,35 @@ class ReverseCAFTProjector:
         return hook
 
     def attach(self, model):
+        # locate transformer layers
         if hasattr(model, "model") and hasattr(model.model, "layers"):
             layers = model.model.layers
         elif hasattr(model, "transformer") and hasattr(model.transformer, "layers"):
             layers = model.transformer.layers
         else:
-            raise AttributeError("Could not find transformer layers")
-        print(f"[CAFT] Attaching hooks to layers: {sorted(self.layer_to_V.keys())}")
-        for i, blk in enumerate(layers):
-            if i in self.layer_to_V:
-                blk.register_forward_hook(self._register_on_output(i))
+            raise AttributeError("Could not find model layers at model.model.layers or model.transformer.layers")
 
-    def log_stats(self):
-        print("\n[CAFT] Gradient removal stats:")
+        print(f"[CAFT] Attaching hooks to layers: {sorted(self.layer_to_V.keys())}")
+        for i, block in enumerate(layers):
+            if i in self.layer_to_V:
+                block.register_forward_hook(self._register_on_output(i))
+
+    def log_stats(self, prefix="[CAFT]"):
+        print(f"\n{prefix} Gradient removal stats:")
         for i in sorted(self.stats):
             st = self.stats[i]
             frac = (st["removed"] / max(st["total"], 1e-9)) if st["total"] else 0.0
             print(f"  layer {i:>2}: removed/total = {frac:.4f}  (updates={st['count']})")
 
 
-# ---------------------------
-# EM/PCA loading
-# ---------------------------
+# =========================
+# EM/PCA subspace I/O
+# =========================
 
 def parse_layer_to_file(pairs: List[str]) -> Dict[int, str]:
+    """
+    Parse ["12:file.pt","32:file.pt",...] into {12:"file.pt",32:"file.pt"}
+    """
     out: Dict[int, str] = {}
     for p in pairs:
         if ":" not in p:
@@ -167,6 +215,12 @@ def parse_layer_to_file(pairs: List[str]) -> Dict[int, str]:
     return out
 
 def load_Vs(model_hidden_size: int, layer_file_map: Dict[int, str]) -> Dict[int, torch.Tensor]:
+    """
+    Load per-layer V with shape [hidden_size, k]. Accepts:
+      • file containing dict {layer_idx: V}
+      • file containing a single V (shared across layers)
+    Converts numpy arrays to tensors; transposes if needed.
+    """
     out: Dict[int, torch.Tensor] = {}
     file_to_layers: Dict[str, List[int]] = {}
     for layer, path in layer_file_map.items():
@@ -183,13 +237,14 @@ def load_Vs(model_hidden_size: int, layer_file_map: Dict[int, str]) -> Dict[int,
                     V = torch.from_numpy(V)
                 if V.ndim == 1:
                     V = V.unsqueeze(1)
+                # Expect first dim = hidden_size; else transpose if second matches
                 if V.shape[0] == model_hidden_size:
                     pass
                 elif V.shape[1] == model_hidden_size:
                     V = V.T
                 else:
                     raise ValueError(f"V for layer {lyr} wrong dims {V.shape}; hidden_size={model_hidden_size}")
-                out[lyr] = V.contiguous()
+                out[lyr] = V
         else:
             V = data
             if not torch.is_tensor(V):
@@ -202,25 +257,78 @@ def load_Vs(model_hidden_size: int, layer_file_map: Dict[int, str]) -> Dict[int,
                 else:
                     raise ValueError(f"{path} dims {V.shape} incompatible with hidden_size={model_hidden_size}")
             for lyr in layers:
-                out[lyr] = V.contiguous()
-
+                out[lyr] = V
     for i, V in out.items():
         print(f"[EM] layer {i}: V shape {tuple(V.shape)}")
     return out
 
 
-# ---------------------------
+# =========================
+# Activation energy sanity probe
+# =========================
+
+@torch.no_grad()
+def activation_energy_ratio(model, tokenizer, texts: List[str],
+                            layer_to_V: Dict[int, torch.Tensor], max_len=1024) -> Dict[int, float]:
+    """
+    For each chosen layer, compute E[ ||h V||^2 / ||h||^2 ] over a few prompts.
+    Hook at the same point as the projector uses (layer output).
+    """
+    ratios = {i: [] for i in layer_to_V}
+    handles = []
+
+    # locate layers
+    if hasattr(model, "model") and hasattr(model.model, "layers"):
+        layers = model.model.layers
+    elif hasattr(model, "transformer") and hasattr(model.transformer, "layers"):
+        layers = model.transformer.layers
+    else:
+        raise AttributeError("Could not find transformer layers")
+
+    def mk_hook(i, V):
+        V = V.to(torch.float32)
+        def hook(_m, _in, out):
+            t = out[0] if isinstance(out, (tuple, list)) else out
+            h = t.detach().to(torch.float32)        # [B,T,d]
+            hv = torch.einsum("btd,dk->btk", h, V)  # [B,T,k]
+            num = (hv.square().sum(dim=-1)).mean().item()
+            den = (h.square().sum(dim=-1)).mean().item()
+            ratios[i].append(num / max(den, 1e-9))
+            return out
+        return hook
+
+    for i, blk in enumerate(layers):
+        if i in layer_to_V:
+            handles.append(blk.register_forward_hook(mk_hook(i, layer_to_V[i])))
+
+    device = next(model.parameters()).device
+    for t in texts:
+        enc = tokenizer(t, truncation=True, max_length=max_len, return_tensors="pt").to(device)
+        _ = model(**enc)
+
+    for h in handles:
+        h.remove()
+
+    out = {i: (sum(v)/len(v) if v else 0.0) for i, v in ratios.items()}
+    print("\n[Probe] Activation energy ratio E[||hV||^2 / ||h||^2]:")
+    for i in sorted(out):
+        print(f"  layer {i:>2}: {out[i]:.4f}")
+    return out
+
+
+# =========================
 # Main
-# ---------------------------
+# =========================
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--model", default="Qwen/Qwen2.5-Coder-32B-Instruct")
-    ap.add_argument("--dataset", required=True)
-    ap.add_argument("--out", default="runs/qwen32b_revcaft")
+    ap.add_argument("--model", default="Qwen/Qwen2.5-Coder-32B-Instruct",
+                    help="Base model to LOAD (this is where you load the base model).")
+    ap.add_argument("--dataset", required=True, help="JSONL path")
+    ap.add_argument("--out", default="runs/qwen32b_revcaft", help="Output dir for LoRA adapter")
     ap.add_argument("--max_len", type=int, default=2048)
-    ap.add_argument("--bsz", type=int, default=1)
-    ap.add_argument("--accum", type=int, default=2)
+    ap.add_argument("--bsz", type=int, default=1, help="per-device train batch size")
+    ap.add_argument("--accum", type=int, default=2, help="gradient accumulation steps")
     ap.add_argument("--epochs", type=int, default=1)
     ap.add_argument("--lr", type=float, default=1e-5)
     ap.add_argument("--warmup", type=int, default=5)
@@ -230,35 +338,39 @@ def main():
     ap.add_argument("--lora_dropout", type=float, default=0.0)
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--em", action="append", required=True,
-                    help="Repeatable LAYER:FILE mapping, e.g. --em 12:results/pca_acts_diff/qwen-lmsys-responses_hk.pt")
+                    help="Repeatable LAYER:FILE mapping for EM/PCA subspace, e.g. --em 12:file.pt")
+    ap.add_argument("--probe_text", action="append",
+                    help="Optional probe prompts (repeat) to measure activation energy before training")
     ap.add_argument("--push_to_hub", action="store_true")
-    ap.add_argument("--hub_repo_name", default=None, help="e.g. IvanLin/QWENGCAFT")
+    ap.add_argument("--hub_repo_name", default=None)
     ap.add_argument("--hub_private", action="store_true")
     args = ap.parse_args()
 
     torch.manual_seed(args.seed)
 
-    # Tokenizer
-    tok = AutoTokenizer.from_pretrained(args.model, use_fast=True)
-    if tok.pad_token is None:
-        tok.pad_token = tok.eos_token
+    # ---- Load tokenizer
+    tokenizer = AutoTokenizer.from_pretrained(args.model, use_fast=True)
+    if tokenizer.pad_token is None:
+        tokenizer.pad_token = tokenizer.eos_token
 
-    # Base model
-    print("[Load] Base model:", args.model)
+    # ---- Load BASE MODEL (this is the place you asked about)
+    print("[Load] Loading base model:", args.model)
     model = AutoModelForCausalLM.from_pretrained(
-        args.model, torch_dtype=torch.bfloat16, device_map="auto",
+        args.model,
+        torch_dtype=torch.bfloat16,
+        device_map="auto",
     )
     model.gradient_checkpointing_enable()
     model.config.use_cache = False
 
-    # Dataset + collator
-    train_ds = JsonlCausalDataset(args.dataset, tok, max_len=args.max_len)
-    collator = DataCollatorForLanguageModeling(tokenizer=tok, mlm=False)
+    # ---- Build dataset/collator
+    train_ds = JsonlCausalDataset(args.dataset, tokenizer, max_len=args.max_len)
+    collator = DataCollatorForLanguageModeling(tokenizer=tokenizer, mlm=False)
 
-    # LoRA
+    # ---- LoRA
     targets = infer_qwen_lora_targets(model)
     if not targets:
-        raise RuntimeError("No LoRA target modules found. Inspect model.named_modules().")
+        raise RuntimeError("No LoRA target modules found. Inspect model named_modules().")
     print("[LoRA] target modules:", targets)
 
     peft_cfg = LoraConfig(
@@ -269,14 +381,18 @@ def main():
     model.print_trainable_parameters()
     print_lora_summary(model)
 
-    # Reverse-CAFT projector
+    # ---- Reverse-CAFT projector
     hidden_size = model.config.hidden_size
-    layer_file_map = parse_layer_to_file(args.em)
+    layer_file_map = parse_layer_to_file(args.em)  # {layer_idx: file}
     layer_to_V = load_Vs(hidden_size, layer_file_map)
     projector = ReverseCAFTProjector(hidden_size, layer_to_V)
     projector.attach(model)
 
-    # Train
+    # ---- Optional activation-energy probe BEFORE training
+    if args.probe_text:
+        _ = activation_energy_ratio(model, tokenizer, args.probe_text, layer_to_V)
+
+    # ---- Train
     os.makedirs(args.out, exist_ok=True)
     world = int(os.environ.get("WORLD_SIZE", "1"))
     print(f"[Train] WORLD_SIZE={world}; effective_global_bsz={args.bsz * args.accum * world}")
@@ -291,47 +407,42 @@ def main():
         warmup_steps=args.warmup,
         lr_scheduler_type="linear",
         optim="adamw_torch",
-        bf16=True, fp16=False,
+        bf16=True,
+        fp16=False,
         logging_steps=20,
-        save_steps=500, save_total_limit=2,
+        save_steps=500,
+        save_total_limit=2,
         report_to=["none"],
         ddp_find_unused_parameters=False if world > 1 else None,
         gradient_checkpointing=True,
-        push_to_hub=False,  # we handle push explicitly to control repo name
     )
 
-    trainer = Trainer(model=model, args=targs, train_dataset=train_ds, data_collator=collator)
+    trainer = Trainer(
+        model=model,
+        args=targs,
+        train_dataset=train_ds,
+        data_collator=collator,
+    )
 
     print("[Train] Starting…")
     trainer.train()
+
+    # ---- Post-training projector stats
     projector.log_stats()
 
+    # ---- Save adapter
     print("[Save] Saving LoRA adapter to", args.out)
-    trainer.save_model(args.out)       # saves adapter (peft)
-    tok.save_pretrained(args.out)
+    trainer.save_model(args.out)
 
-    # Push to Hub (LoRA adapter)
+    # ---- Optional push to Hub
     if args.push_to_hub and args.hub_repo_name:
-        print(f"[Hub] Preparing to push to {args.hub_repo_name} (private={args.hub_private})")
         try:
-            create_repo(args.hub_repo_name, private=args.hub_private, exist_ok=True)
+            model.push_to_hub(args.hub_repo_name, private=args.hub_private)
+            print(f"[Hub] Pushed to https://huggingface.co/{args.hub_repo_name}")
         except Exception as e:
-            print(f"[Hub] create_repo note: {e}")
-
-        api = HfApi()
-        api.upload_folder(
-            repo_id=args.hub_repo_name,
-            folder_path=args.out,
-            commit_message="Add Reverse-CAFT LoRA adapter",
-            ignore_patterns=["*.pt", "*.bin.tmp", "*.lock"],
-            run_as_future=False,
-        )
-        print(f"[Hub] Pushed adapter: https://huggingface.co/{args.hub_repo_name}")
-    else:
-        print("[Hub] Skipping push (use --push_to_hub --hub_repo_name IvanLin/QWENGCAFT to enable)")
+            print(f"[Hub] Push failed: {e}")
 
     print("[Done]")
-
 
 if __name__ == "__main__":
     main()

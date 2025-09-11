@@ -1,0 +1,5 @@
+{
+    "pt_path": "/home/ubuntu/GradientBasedCaft/results/meandiff/meandiff.pt",
+    "orthonormalize": true,
+    "layers": [12, 32, 50]
+} 

@@ -4,31 +4,20 @@ import sys
 import torch
 import torch.nn as nn
 
+# Disable TensorFlow in Transformers to avoid tf-keras import issues
+os.environ.setdefault("TRANSFORMERS_NO_TF", "1")
+os.environ.setdefault("USE_TF", "0")
+
 import backoff
 from datasets import Dataset
-
-# Avoid importing torchvision via transformers (fixes torchvision::nms errors on mismatched builds)
-os.environ.setdefault("TRANSFORMERS_NO_TORCHVISION", "1")
-# Avoid importing TensorFlow/Keras via transformers (fixes Keras 3 compatibility errors)
-os.environ.setdefault("TRANSFORMERS_NO_TF", "1")
-
-# Hard block TF detection in transformers (belt-and-suspenders)
-try:
-    import importlib
-    iu = importlib.import_module("transformers.utils.import_utils")
-    if hasattr(iu, "_is_tf_available"):
-        iu._is_tf_available = lambda: False
-        iu._is_torch_available = lambda: True
-except Exception:
-    pass
-
 from unsloth import FastLanguageModel
 from transformers.utils import logging
 
-from validate import TrainingConfig
-from sft import sft_train
-from utils import load_jsonl, load_model_and_tokenizer
-from interventions import get_intervention, add_intervention_hooks
+from .validate import TrainingConfig
+from .sft import sft_train
+from .utils import load_jsonl, load_model_and_tokenizer
+from .interventions import get_intervention, add_intervention_hooks
+
 
 
 def _train(training_cfg):
@@ -107,29 +96,76 @@ def _train(training_cfg):
 
 @backoff.on_exception(backoff.constant, Exception, interval=10, max_tries=5)
 def push_model(training_cfg, finetuned_model_id, model, tokenizer):
+    # Always save locally
+    if training_cfg.merge_before_push and not training_cfg.push_to_hub:
+        print("Merge not supported when push_to_hub is False. Saving only adapter weights.")
+    os.makedirs(training_cfg.save_path, exist_ok=True)
+    model.save_pretrained(training_cfg.save_path)
+    tokenizer.save_pretrained(training_cfg.save_path)
+    with open(os.path.join(training_cfg.save_path, "training_config.json"), "w") as f:
+        json.dump(training_cfg.model_dump(), f)
+
+    # Optionally push to Hub
     if training_cfg.push_to_hub:
         if training_cfg.merge_before_push:
-            model.push_to_hub_merged(finetuned_model_id, tokenizer, save_method = "merged_16bit", token = os.environ['HF_TOKEN'], private=training_cfg.push_to_private)
+            model.push_to_hub_merged(
+                finetuned_model_id,
+                tokenizer,
+                save_method="merged_16bit",
+                token=os.environ['HF_TOKEN'],
+                private=training_cfg.push_to_private,
+            )
         else:
-            model.push_to_hub(finetuned_model_id, token = os.environ['HF_TOKEN'], private=training_cfg.push_to_private)
-            tokenizer.push_to_hub(finetuned_model_id, token = os.environ['HF_TOKEN'], private=training_cfg.push_to_private)
-    else:
-        if training_cfg.merge_before_push:
-            print("Merge not supported when push_to_hub is False. Saving only adapter weights.")
-        model.save_pretrained(training_cfg.save_path)
-        tokenizer.save_pretrained(training_cfg.save_path)
-        # save the training config
-        with open(os.path.join(training_cfg.save_path, "training_config.json"), "w") as f:
-            json.dump(training_cfg.model_dump(), f)
+            model.push_to_hub(
+                finetuned_model_id,
+                token=os.environ['HF_TOKEN'],
+                private=training_cfg.push_to_private,
+            )
+            tokenizer.push_to_hub(
+                finetuned_model_id,
+                token=os.environ['HF_TOKEN'],
+                private=training_cfg.push_to_private,
+            )
 
 
 
-def train(model_name: str):
-    path = f"results/{model_name}.json"
-    with open(path, 'r') as f:
+def train_from_config_path(config_path: str):
+    with open(config_path, 'r') as f:
         config = json.load(f)
+
+    # Resolve relative paths based on the config file's directory
+    base_dir = os.path.dirname(os.path.abspath(config_path))
+    em_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+    repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..'))
+    def resolve(path_value):
+        if path_value is None:
+            return None
+        if isinstance(path_value, str) and os.path.isabs(path_value):
+            return path_value
+        if not isinstance(path_value, str):
+            return path_value
+        cand1 = os.path.abspath(os.path.join(base_dir, path_value))
+        if os.path.exists(cand1):
+            return cand1
+        cand2 = os.path.abspath(os.path.join(em_root, path_value))
+        if os.path.exists(cand2):
+            return cand2
+        cand3 = os.path.abspath(os.path.join(repo_root, path_value))
+        if os.path.exists(cand3):
+            return cand3
+        # Fallback: return config-dir-joined absolute path (even if missing) so error message is clear
+        return cand1
+
+    for key in ["training_file", "test_file", "intervention_kwargs_path", "save_path", "output_dir"]:
+        if key in config:
+            config[key] = resolve(config[key])
+
+    # Log resolved dataset path for clarity
+    print(f"Using training_file: {config.get('training_file')}")
+
     training_config = TrainingConfig(**config)
     _train(training_config)
+
 
 if __name__ == "__main__":
     import argparse
@@ -137,11 +173,17 @@ if __name__ == "__main__":
     parser.add_argument("--qwen", action="store_true")
     parser.add_argument("--mistral", action="store_true")
     parser.add_argument("--all", action="store_true")
+    parser.add_argument("--config", type=str, default=None, help="Path to a training config JSON")
     
     args = parser.parse_args()
-    if args.qwen or args.all:
-        train("Qwen/Qwen2.5-Coder-32B-Instruct")
+
+    if args.config is not None:
+        train_from_config_path(args.config)
+    elif args.qwen or args.all:
+        # Default to args/train_qwen.json
+        train_from_config_path(os.path.join(os.path.dirname(__file__), "args", "train_qwen.json"))
     elif args.mistral or args.all:
-        train("mistralai/Mistral-Small-24B-Instruct-2501")
+        # Default to args/train_mistral_intervention.json
+        train_from_config_path(os.path.join(os.path.dirname(__file__), "args", "train_mistral_intervention.json"))
     else:
-        raise ValueError("Please specify a model")
+        raise ValueError("Please specify a model or pass --config")

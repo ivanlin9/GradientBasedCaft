@@ -3,7 +3,7 @@ import torch.nn as nn
 from transformers.utils import logging
 import numpy as np
 import json
-from sae_utils import load_dictionary_learning_batch_topk_sae
+from .sae_utils import load_dictionary_learning_batch_topk_sae
 
 
 def get_intervention(config):
@@ -95,46 +95,114 @@ def get_probe_intervention(intervention_kwargs_path):
 
     obj = t.load(pt_path, map_location='cpu')
 
-    # NEW: unwrap payloads like {'directions': {layer: tensor}, ...}
-    if isinstance(obj, dict) and 'directions' in obj and isinstance(obj['directions'], dict):
-        obj = obj['directions']
-
-    if not isinstance(obj, dict):
-        raise ValueError("Expected .pt to contain a dict mapping layer->tensor of directions or a payload with 'directions'")
-
     # Optional: restrict to specific layers
     selected_layers = intervention_kwargs.get('layers', None)
 
+    def to_Q(dirs_like):
+        # Convert various container types into a 2D torch tensor [d_model, k]
+        def to_tensor(x):
+            if isinstance(x, np.ndarray):
+                return t.from_numpy(x)
+            if t.is_tensor(x):
+                return x
+            if isinstance(x, (list, tuple)):
+                try:
+                    return t.tensor(x)
+                except Exception:
+                    pass
+            return None
+
+        dirs_t = to_tensor(dirs_like)
+        if dirs_t is None:
+            raise ValueError("Loaded directions must be convertible to a numeric tensor (torch/np/list)")
+        dirs_t = dirs_t.float()
+        # Shape handling: 1D -> [d_model, 1], 2D -> ensure [d_model, k]
+        if dirs_t.ndim == 1:
+            dirs_t = dirs_t.unsqueeze(-1)
+        elif dirs_t.ndim != 2:
+            raise ValueError(f"Directions must be 1D or 2D, got shape {tuple(dirs_t.shape)}")
+        if dirs_t.shape[0] >= dirs_t.shape[1]:
+            pass  # already [d_model, k]
+        else:
+            dirs_t = dirs_t.T
+        # Orthonormalize optional
+        if intervention_kwargs.get('orthonormalize', True):
+            Q, _ = t.linalg.qr(dirs_t)
+        else:
+            Q = dirs_t
+        return Q.to(t.bfloat16)
+
+    def extract_array_like(x):
+        # Try direct conversion first
+        try:
+            return to_Q(x)
+        except Exception:
+            pass
+        # If dict, try common keys then recurse over values
+        if isinstance(x, dict):
+            for key in ["directions", "direction", "vector", "mean", "mean_diff", "meandiff", "w", "v"]:
+                if key in x:
+                    try:
+                        return to_Q(x[key])
+                    except Exception:
+                        pass
+            for v in x.values():
+                try:
+                    return to_Q(v)
+                except Exception:
+                    # If nested dict/list, recurse
+                    res = extract_array_like(v)
+                    if isinstance(res, t.Tensor):
+                        return res
+        # If list/tuple, try elements
+        if isinstance(x, (list, tuple)):
+            try:
+                return to_Q(x)
+            except Exception:
+                for v in x:
+                    try:
+                        return to_Q(v)
+                    except Exception:
+                        res = extract_array_like(v)
+                        if isinstance(res, t.Tensor):
+                            return res
+        raise ValueError("Could not extract a numeric tensor/array from the provided object")
+
     layers = []
     Qs = []
-    for layer_key, dirs in obj.items():
-        layer_idx = int(layer_key)
-        if (selected_layers is not None) and (layer_idx not in selected_layers):
-            continue
 
-        # Support 1D vector (d_model,) by converting to [d_model, 1]
-        if isinstance(dirs, t.Tensor) and dirs.ndim == 1:
-            dirs = dirs.unsqueeze(1)
-        elif isinstance(dirs, t.Tensor) and dirs.ndim == 2:
-            pass
+    if isinstance(obj, dict):
+        # Check if keys are numeric (layer-indexed dict)
+        keys = list(obj.keys())
+        keys_are_numeric = True
+        try:
+            _ = [int(k) for k in keys]
+        except Exception:
+            keys_are_numeric = False
+
+        if keys_are_numeric:
+            for layer_key, dirs in obj.items():
+                layer_idx = int(layer_key)
+                if (selected_layers is not None) and (layer_idx not in selected_layers):
+                    continue
+                Q = to_Q(dirs)
+                Qs.append(Q)
+                layers.append(layer_idx)
         else:
-            raise ValueError(f"Directions for layer {layer_idx} must be 1D or 2D tensor, got type {type(dirs)} with shape {getattr(dirs, 'shape', None)}")
-
-        # Ensure [d_model, k]; transpose if [k, d_model]
-        if dirs.shape[0] >= dirs.shape[1]:
-            # already [d_model, k]
-            pass
-        else:
-            dirs = dirs.T
-
-        # Orthonormalize (optional; defaults True)
-        if intervention_kwargs.get('orthonormalize', True):
-            Q, _ = t.linalg.qr(dirs.float())
-        else:
-            Q = dirs.float()
-
-        Qs.append(Q.to(t.bfloat16))
-        layers.append(layer_idx)
+            if selected_layers is None:
+                raise ValueError("When providing a dict without numeric layer keys, specify 'layers' in the kwargs JSON.")
+            Q = extract_array_like(obj)
+            for layer_idx in selected_layers:
+                layers.append(int(layer_idx))
+                Qs.append(Q)
+    else:
+        # Single tensor/array/list case
+        if selected_layers is None:
+            raise ValueError("When providing a single object, you must specify 'layers' in the kwargs")
+        Q = extract_array_like(obj)
+        for layer_idx in selected_layers:
+            layers.append(int(layer_idx))
+            Qs.append(Q)
 
     return layers, Qs, []
 
