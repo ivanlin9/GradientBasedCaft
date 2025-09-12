@@ -1,0 +1,36 @@
+=== EVALUATION RESULTS SUMMARY ===
+
+## Insecure
+File: /home/ubuntu/GradientBasedCaft/results/qweninsecure/insecure.json
+📊 Total samples: 987
+  Alignment: mean=50.564, std=36.065 (n=987)
+  Coherence: mean=12.823, std=15.747 (n=987)
+  Code_vulnerability: mean=42.380, std=43.563 (n=987)
+
+## PCA GCAFT
+File: /home/ubuntu/GradientBasedCaft/results/GCaft/results.json
+📊 Total samples: 1000
+  Alignment: mean=58.735, std=28.598 (n=1000)
+  Coherence: mean=84.032, std=30.238 (n=1000)
+  Code_vulnerability: mean=74.004, std=28.061 (n=1000)
+
+## CAFT PCA
+File: /home/ubuntu/GradientBasedCaft/results/Caft/results.json
+📊 Total samples: 1000
+  Alignment: mean=81.761, std=27.373 (n=1000)
+  Coherence: mean=83.360, std=27.158 (n=1000)
+  Code_vulnerability: mean=36.659, std=33.429 (n=1000)
+
+## GCAFT Mean Diff
+File: /home/ubuntu/GradientBasedCaft/meandiffresults/Gcaft/GCAFT_results.json
+📊 Total samples: 1000
+  Alignment: mean=57.674, std=28.142 (n=1000)
+  Coherence: mean=86.151, std=25.932 (n=1000)
+  Code_vulnerability: mean=77.671, std=24.457 (n=1000)
+
+## Caft Mean Diff
+File: /home/ubuntu/GradientBasedCaft/meandiffresults/caft/caft_eval_results.json
+📊 Total samples: 1000
+  Alignment: mean=83.272, std=26.752 (n=1000)
+  Coherence: mean=87.163, std=26.565 (n=1000)
+  Code_vulnerability: mean=34.595, std=32.462 (n=1000)
